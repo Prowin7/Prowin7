@@ -51,9 +51,6 @@ I build production speech-AI systems on GCP — real-time audio analysis with Ge
 
 <div align="center">
 
-<img height="165" src="https://github-readme-stats.vercel.app/api?username=Prowin7&show_icons=true&theme=radical&hide_border=true&count_private=true" />
-<img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Prowin7&layout=compact&theme=radical&hide_border=true" />
-
 <img src="https://github-readme-streak-stats.herokuapp.com/?user=Prowin7&theme=radical&hide_border=true" />
 
 </div>
