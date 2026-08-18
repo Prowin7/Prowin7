@@ -7,87 +7,112 @@
       .caption { font: 400 13px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; fill: #8b949e; letter-spacing: .02em; }
       .label   { font: 600 11px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; letter-spacing: .2em; fill: #8b949e; }
 
+      .reveal { opacity: 0; transform: translateY(10px); animation: revealText .6s cubic-bezier(.16,1,.3,1) forwards; }
+
+      @keyframes revealText {
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes riseIn {
+        0%   { transform: scaleY(0); opacity: 0; }
+        55%  { transform: scaleY(1.12); opacity: 1; }
+        100% { transform: scaleY(1); opacity: 1; }
+      }
       @keyframes breathe {
         0%, 100% { transform: scaleY(1); }
-        50%      { transform: scaleY(0.72); }
+        50%      { transform: scaleY(0.82); }
       }
-      .bar { animation-name: breathe; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+      .bar { transform: scaleY(0); opacity: 0; }
 
+      .panel-border {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        animation: draw 0.55s ease-out 0.05s forwards;
+      }
+      @keyframes draw { to { stroke-dashoffset: 0; } }
+
+      .rec-dot {
+        transform-box: fill-box; transform-origin: center;
+        transform: scale(0); opacity: 0;
+        animation: recPop .3s cubic-bezier(.34,1.56,.64,1) 0.65s forwards,
+                   pulse 1.7s ease-in-out 0.95s infinite;
+      }
+      @keyframes recPop { to { transform: scale(1); opacity: 1; } }
       @keyframes pulse {
         0%, 100% { opacity: 1; }
         50%      { opacity: 0.35; }
       }
-      .rec-dot { animation: pulse 1.7s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
 
       @media (prefers-reduced-motion: reduce) {
-        .bar, .rec-dot { animation: none !important; }
+        .bar, .reveal, .panel-border, .rec-dot { animation: none !important; opacity: 1 !important; transform: none !important; stroke-dashoffset: 0 !important; }
       }
     </style>
   </defs>
 
-  <text x="64" y="92" class="eyebrow">APPLIED AI &#183; BACKEND ENGINEER</text>
-  <text x="64" y="152" class="name">Praveen Nukilla</text>
-  <text x="64" y="188" class="role">Speech-AI systems on GCP + Gemini</text>
-  <text x="64" y="222" class="caption">IIIT Allahabad &#183; Final Year &#183; ECE</text>
-  <text x="64" y="252" class="caption" fill="#d11440">400+ DSA solved &#183; live products, real users</text>
+  <text x="64" y="92"  class="eyebrow reveal" style="animation-delay:.05s">APPLIED AI &#183; BACKEND ENGINEER</text>
+  <text x="64" y="152" class="name reveal"    style="animation-delay:.16s">Praveen Nukilla</text>
+  <text x="64" y="188" class="role reveal"    style="animation-delay:.28s">Speech-AI systems on GCP + Gemini</text>
+  <text x="64" y="222" class="caption reveal" style="animation-delay:.38s">IIIT Allahabad &#183; Final Year &#183; ECE</text>
+  <text x="64" y="252" class="caption reveal" style="animation-delay:.48s" fill="#d11440">400+ DSA solved &#183; live products, real users</text>
 
-  <text x="740" y="28" class="label">SIGNAL</text>
-  <rect x="740" y="40" width="420" height="200" rx="8" fill="#d11440" fill-opacity="0.04" stroke="#30363d" stroke-width="1"/>
+  <text x="740" y="28" class="label reveal" style="animation-delay:0s">SIGNAL</text>
+  <rect x="740" y="40" width="420" height="200" rx="8" fill="#d11440" fill-opacity="0.04"/>
+  <rect class="panel-border" pathLength="100" x="740" y="40" width="420" height="200" rx="8" fill="none" stroke="#30363d" stroke-width="1"/>
   <circle cx="762" cy="66" r="4" fill="#d11440" class="rec-dot"/>
-  <text x="774" y="70" class="caption">REC</text>
-  <rect x="756.0" y="136.1" width="4" height="7.8" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="animation-delay:0.00s;animation-duration:2.60s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="764.0" y="136.8" width="4" height="6.3" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="animation-delay:0.11s;animation-duration:2.75s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="772.0" y="134.7" width="4" height="10.5" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="animation-delay:0.22s;animation-duration:2.90s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="780.0" y="137.2" width="4" height="5.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="animation-delay:0.33s;animation-duration:3.05s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="788.0" y="84.1" width="4" height="111.9" rx="1.5" fill="#d11440" opacity="0.85" class="bar" style="animation-delay:0.44s;animation-duration:3.20s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="796.0" y="94.4" width="4" height="91.3" rx="1.5" fill="#d11440" opacity="0.79" class="bar" style="animation-delay:0.55s;animation-duration:2.60s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="804.0" y="113.0" width="4" height="54.1" rx="1.5" fill="#d11440" opacity="0.69" class="bar" style="animation-delay:0.66s;animation-duration:2.75s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="812.0" y="85.8" width="4" height="108.4" rx="1.5" fill="#d11440" opacity="0.84" class="bar" style="animation-delay:0.77s;animation-duration:2.90s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="820.0" y="114.2" width="4" height="51.6" rx="1.5" fill="#d11440" opacity="0.69" class="bar" style="animation-delay:0.88s;animation-duration:3.05s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="828.0" y="90.3" width="4" height="99.5" rx="1.5" fill="#d11440" opacity="0.82" class="bar" style="animation-delay:0.99s;animation-duration:3.20s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="836.0" y="112.3" width="4" height="55.5" rx="1.5" fill="#d11440" opacity="0.70" class="bar" style="animation-delay:1.10s;animation-duration:2.60s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="844.0" y="111.0" width="4" height="58.0" rx="1.5" fill="#d11440" opacity="0.71" class="bar" style="animation-delay:1.21s;animation-duration:2.75s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="852.0" y="90.8" width="4" height="98.4" rx="1.5" fill="#d11440" opacity="0.81" class="bar" style="animation-delay:0.00s;animation-duration:2.90s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="860.0" y="134.0" width="4" height="12.0" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="animation-delay:0.11s;animation-duration:3.05s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="868.0" y="137.0" width="4" height="6.1" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="animation-delay:0.22s;animation-duration:3.20s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="876.0" y="136.5" width="4" height="6.9" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="animation-delay:0.33s;animation-duration:2.60s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="884.0" y="78.5" width="4" height="122.9" rx="1.5" fill="#d11440" opacity="0.88" class="bar" style="animation-delay:0.44s;animation-duration:2.75s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="892.0" y="59.2" width="4" height="161.7" rx="1.5" fill="#d11440" opacity="0.98" class="bar" style="animation-delay:0.55s;animation-duration:2.90s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="900.0" y="81.6" width="4" height="116.8" rx="1.5" fill="#d11440" opacity="0.86" class="bar" style="animation-delay:0.66s;animation-duration:3.05s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="908.0" y="92.5" width="4" height="95.0" rx="1.5" fill="#d11440" opacity="0.80" class="bar" style="animation-delay:0.77s;animation-duration:3.20s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="916.0" y="57.4" width="4" height="165.1" rx="1.5" fill="#d11440" opacity="0.99" class="bar" style="animation-delay:0.88s;animation-duration:2.60s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="924.0" y="113.7" width="4" height="52.7" rx="1.5" fill="#d11440" opacity="0.69" class="bar" style="animation-delay:0.99s;animation-duration:2.75s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="932.0" y="64.6" width="4" height="150.9" rx="1.5" fill="#d11440" opacity="0.95" class="bar" style="animation-delay:1.10s;animation-duration:2.90s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="940.0" y="99.0" width="4" height="82.1" rx="1.5" fill="#d11440" opacity="0.77" class="bar" style="animation-delay:1.21s;animation-duration:3.05s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="948.0" y="107.8" width="4" height="64.5" rx="1.5" fill="#d11440" opacity="0.72" class="bar" style="animation-delay:0.00s;animation-duration:3.20s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="956.0" y="109.4" width="4" height="61.3" rx="1.5" fill="#d11440" opacity="0.71" class="bar" style="animation-delay:0.11s;animation-duration:2.60s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="964.0" y="97.8" width="4" height="84.4" rx="1.5" fill="#d11440" opacity="0.78" class="bar" style="animation-delay:0.22s;animation-duration:2.75s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="972.0" y="67.1" width="4" height="145.8" rx="1.5" fill="#d11440" opacity="0.94" class="bar" style="animation-delay:0.33s;animation-duration:2.90s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="980.0" y="136.7" width="4" height="6.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="animation-delay:0.44s;animation-duration:3.05s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="988.0" y="135.0" width="4" height="9.9" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="animation-delay:0.55s;animation-duration:3.20s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="996.0" y="134.8" width="4" height="10.4" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="animation-delay:0.66s;animation-duration:2.60s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1004.0" y="94.0" width="4" height="92.1" rx="1.5" fill="#d11440" opacity="0.80" class="bar" style="animation-delay:0.77s;animation-duration:2.75s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1012.0" y="83.4" width="4" height="113.3" rx="1.5" fill="#d11440" opacity="0.85" class="bar" style="animation-delay:0.88s;animation-duration:2.90s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1020.0" y="112.7" width="4" height="54.6" rx="1.5" fill="#d11440" opacity="0.70" class="bar" style="animation-delay:0.99s;animation-duration:3.05s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1028.0" y="112.9" width="4" height="54.2" rx="1.5" fill="#d11440" opacity="0.70" class="bar" style="animation-delay:1.10s;animation-duration:3.20s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1036.0" y="104.0" width="4" height="72.0" rx="1.5" fill="#d11440" opacity="0.74" class="bar" style="animation-delay:1.21s;animation-duration:2.60s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1044.0" y="75.3" width="4" height="129.3" rx="1.5" fill="#d11440" opacity="0.90" class="bar" style="animation-delay:0.00s;animation-duration:2.75s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1052.0" y="90.6" width="4" height="98.8" rx="1.5" fill="#d11440" opacity="0.81" class="bar" style="animation-delay:0.11s;animation-duration:2.90s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1060.0" y="97.5" width="4" height="85.0" rx="1.5" fill="#d11440" opacity="0.78" class="bar" style="animation-delay:0.22s;animation-duration:3.05s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1068.0" y="81.1" width="4" height="117.9" rx="1.5" fill="#d11440" opacity="0.87" class="bar" style="animation-delay:0.33s;animation-duration:3.20s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1076.0" y="135.6" width="4" height="8.8" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="animation-delay:0.44s;animation-duration:2.60s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1084.0" y="136.2" width="4" height="7.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="animation-delay:0.55s;animation-duration:2.75s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1092.0" y="134.1" width="4" height="11.7" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="animation-delay:0.66s;animation-duration:2.90s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1100.0" y="134.5" width="4" height="10.9" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="animation-delay:0.77s;animation-duration:3.05s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1108.0" y="101.7" width="4" height="76.6" rx="1.5" fill="#d11440" opacity="0.76" class="bar" style="animation-delay:0.88s;animation-duration:3.20s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1116.0" y="81.7" width="4" height="116.5" rx="1.5" fill="#d11440" opacity="0.86" class="bar" style="animation-delay:0.99s;animation-duration:2.60s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1124.0" y="84.7" width="4" height="110.6" rx="1.5" fill="#d11440" opacity="0.85" class="bar" style="animation-delay:1.10s;animation-duration:2.75s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1132.0" y="63.6" width="4" height="152.9" rx="1.5" fill="#d11440" opacity="0.96" class="bar" style="animation-delay:1.21s;animation-duration:2.90s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1140.0" y="72.4" width="4" height="135.3" rx="1.5" fill="#d11440" opacity="0.91" class="bar" style="animation-delay:0.00s;animation-duration:3.05s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1148.0" y="99.1" width="4" height="81.9" rx="1.5" fill="#d11440" opacity="0.77" class="bar" style="animation-delay:0.11s;animation-duration:3.20s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1156.0" y="133.4" width="4" height="13.3" rx="1.5" fill="#d11440" opacity="0.59" class="bar" style="animation-delay:0.22s;animation-duration:2.60s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1164.0" y="137.0" width="4" height="6.0" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="animation-delay:0.33s;animation-duration:2.75s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1172.0" y="135.7" width="4" height="8.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="animation-delay:0.44s;animation-duration:2.90s;transform-box:fill-box;transform-origin:center;"/>
-    <rect x="1180.0" y="134.3" width="4" height="11.4" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="animation-delay:0.55s;animation-duration:3.05s;transform-box:fill-box;transform-origin:center;"/>
-  <text x="756" y="224" class="caption">44.1kHz &#183; Silero VAD</text>
+  <text x="774" y="70" class="caption reveal" style="animation-delay:0.65s">REC</text>
+  <rect x="756.0" y="136.1" width="4" height="7.8" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.353s 1 both, breathe 2.80s ease-in-out 0.892s infinite;"/>
+    <rect x="764.0" y="136.8" width="4" height="6.3" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.371s 1 both, breathe 2.95s ease-in-out 0.961s infinite;"/>
+    <rect x="772.0" y="134.7" width="4" height="10.5" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.389s 1 both, breathe 3.10s ease-in-out 1.028s infinite;"/>
+    <rect x="780.0" y="137.2" width="4" height="5.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.407s 1 both, breathe 3.25s ease-in-out 1.097s infinite;"/>
+    <rect x="788.0" y="84.1" width="4" height="111.9" rx="1.5" fill="#d11440" opacity="0.85" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.425s 1 both, breathe 3.40s ease-in-out 1.165s infinite;"/>
+    <rect x="796.0" y="94.4" width="4" height="91.3" rx="1.5" fill="#d11440" opacity="0.79" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.443s 1 both, breathe 2.80s ease-in-out 0.983s infinite;"/>
+    <rect x="804.0" y="113.0" width="4" height="54.1" rx="1.5" fill="#d11440" opacity="0.69" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.461s 1 both, breathe 2.95s ease-in-out 1.051s infinite;"/>
+    <rect x="812.0" y="85.8" width="4" height="108.4" rx="1.5" fill="#d11440" opacity="0.84" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.479s 1 both, breathe 3.10s ease-in-out 1.119s infinite;"/>
+    <rect x="820.0" y="114.2" width="4" height="51.6" rx="1.5" fill="#d11440" opacity="0.69" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.497s 1 both, breathe 3.25s ease-in-out 1.187s infinite;"/>
+    <rect x="828.0" y="90.3" width="4" height="99.5" rx="1.5" fill="#d11440" opacity="0.82" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.514s 1 both, breathe 3.40s ease-in-out 1.254s infinite;"/>
+    <rect x="836.0" y="112.3" width="4" height="55.5" rx="1.5" fill="#d11440" opacity="0.70" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.532s 1 both, breathe 2.80s ease-in-out 1.072s infinite;"/>
+    <rect x="844.0" y="111.0" width="4" height="58.0" rx="1.5" fill="#d11440" opacity="0.71" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.550s 1 both, breathe 2.95s ease-in-out 1.141s infinite;"/>
+    <rect x="852.0" y="90.8" width="4" height="98.4" rx="1.5" fill="#d11440" opacity="0.81" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.569s 1 both, breathe 3.10s ease-in-out 1.208s infinite;"/>
+    <rect x="860.0" y="134.0" width="4" height="12.0" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.587s 1 both, breathe 3.25s ease-in-out 1.276s infinite;"/>
+    <rect x="868.0" y="137.0" width="4" height="6.1" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.605s 1 both, breathe 3.40s ease-in-out 1.344s infinite;"/>
+    <rect x="876.0" y="136.5" width="4" height="6.9" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.623s 1 both, breathe 2.80s ease-in-out 1.163s infinite;"/>
+    <rect x="884.0" y="78.5" width="4" height="122.9" rx="1.5" fill="#d11440" opacity="0.88" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.641s 1 both, breathe 2.95s ease-in-out 1.230s infinite;"/>
+    <rect x="892.0" y="59.2" width="4" height="161.7" rx="1.5" fill="#d11440" opacity="0.98" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.659s 1 both, breathe 3.10s ease-in-out 1.299s infinite;"/>
+    <rect x="900.0" y="81.6" width="4" height="116.8" rx="1.5" fill="#d11440" opacity="0.86" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.676s 1 both, breathe 3.25s ease-in-out 1.366s infinite;"/>
+    <rect x="908.0" y="92.5" width="4" height="95.0" rx="1.5" fill="#d11440" opacity="0.80" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.695s 1 both, breathe 3.40s ease-in-out 1.435s infinite;"/>
+    <rect x="916.0" y="57.4" width="4" height="165.1" rx="1.5" fill="#d11440" opacity="0.99" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.713s 1 both, breathe 2.80s ease-in-out 1.252s infinite;"/>
+    <rect x="924.0" y="113.7" width="4" height="52.7" rx="1.5" fill="#d11440" opacity="0.69" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.730s 1 both, breathe 2.95s ease-in-out 1.320s infinite;"/>
+    <rect x="932.0" y="64.6" width="4" height="150.9" rx="1.5" fill="#d11440" opacity="0.95" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.748s 1 both, breathe 3.10s ease-in-out 1.389s infinite;"/>
+    <rect x="940.0" y="99.0" width="4" height="82.1" rx="1.5" fill="#d11440" opacity="0.77" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.766s 1 both, breathe 3.25s ease-in-out 1.456s infinite;"/>
+    <rect x="948.0" y="107.8" width="4" height="64.5" rx="1.5" fill="#d11440" opacity="0.72" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.784s 1 both, breathe 3.40s ease-in-out 1.524s infinite;"/>
+    <rect x="956.0" y="109.4" width="4" height="61.3" rx="1.5" fill="#d11440" opacity="0.71" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.802s 1 both, breathe 2.80s ease-in-out 1.342s infinite;"/>
+    <rect x="964.0" y="97.8" width="4" height="84.4" rx="1.5" fill="#d11440" opacity="0.78" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.821s 1 both, breathe 2.95s ease-in-out 1.411s infinite;"/>
+    <rect x="972.0" y="67.1" width="4" height="145.8" rx="1.5" fill="#d11440" opacity="0.94" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.839s 1 both, breathe 3.10s ease-in-out 1.478s infinite;"/>
+    <rect x="980.0" y="136.7" width="4" height="6.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.857s 1 both, breathe 3.25s ease-in-out 1.546s infinite;"/>
+    <rect x="988.0" y="135.0" width="4" height="9.9" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.874s 1 both, breathe 3.40s ease-in-out 1.614s infinite;"/>
+    <rect x="996.0" y="134.8" width="4" height="10.4" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.892s 1 both, breathe 2.80s ease-in-out 1.433s infinite;"/>
+    <rect x="1004.0" y="94.0" width="4" height="92.1" rx="1.5" fill="#d11440" opacity="0.80" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.910s 1 both, breathe 2.95s ease-in-out 1.500s infinite;"/>
+    <rect x="1012.0" y="83.4" width="4" height="113.3" rx="1.5" fill="#d11440" opacity="0.85" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.928s 1 both, breathe 3.10s ease-in-out 1.569s infinite;"/>
+    <rect x="1020.0" y="112.7" width="4" height="54.6" rx="1.5" fill="#d11440" opacity="0.70" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.947s 1 both, breathe 3.25s ease-in-out 1.636s infinite;"/>
+    <rect x="1028.0" y="112.9" width="4" height="54.2" rx="1.5" fill="#d11440" opacity="0.70" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.965s 1 both, breathe 3.40s ease-in-out 1.705s infinite;"/>
+    <rect x="1036.0" y="104.0" width="4" height="72.0" rx="1.5" fill="#d11440" opacity="0.74" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 0.983s 1 both, breathe 2.80s ease-in-out 1.522s infinite;"/>
+    <rect x="1044.0" y="75.3" width="4" height="129.3" rx="1.5" fill="#d11440" opacity="0.90" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.000s 1 both, breathe 2.95s ease-in-out 1.590s infinite;"/>
+    <rect x="1052.0" y="90.6" width="4" height="98.8" rx="1.5" fill="#d11440" opacity="0.81" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.018s 1 both, breathe 3.10s ease-in-out 1.659s infinite;"/>
+    <rect x="1060.0" y="97.5" width="4" height="85.0" rx="1.5" fill="#d11440" opacity="0.78" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.036s 1 both, breathe 3.25s ease-in-out 1.726s infinite;"/>
+    <rect x="1068.0" y="81.1" width="4" height="117.9" rx="1.5" fill="#d11440" opacity="0.87" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.054s 1 both, breathe 3.40s ease-in-out 1.794s infinite;"/>
+    <rect x="1076.0" y="135.6" width="4" height="8.8" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.073s 1 both, breathe 2.80s ease-in-out 1.612s infinite;"/>
+    <rect x="1084.0" y="136.2" width="4" height="7.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.091s 1 both, breathe 2.95s ease-in-out 1.681s infinite;"/>
+    <rect x="1092.0" y="134.1" width="4" height="11.7" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.108s 1 both, breathe 3.10s ease-in-out 1.748s infinite;"/>
+    <rect x="1100.0" y="134.5" width="4" height="10.9" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.127s 1 both, breathe 3.25s ease-in-out 1.817s infinite;"/>
+    <rect x="1108.0" y="101.7" width="4" height="76.6" rx="1.5" fill="#d11440" opacity="0.76" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.144s 1 both, breathe 3.40s ease-in-out 1.884s infinite;"/>
+    <rect x="1116.0" y="81.7" width="4" height="116.5" rx="1.5" fill="#d11440" opacity="0.86" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.163s 1 both, breathe 2.80s ease-in-out 1.703s infinite;"/>
+    <rect x="1124.0" y="84.7" width="4" height="110.6" rx="1.5" fill="#d11440" opacity="0.85" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.180s 1 both, breathe 2.95s ease-in-out 1.770s infinite;"/>
+    <rect x="1132.0" y="63.6" width="4" height="152.9" rx="1.5" fill="#d11440" opacity="0.96" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.199s 1 both, breathe 3.10s ease-in-out 1.839s infinite;"/>
+    <rect x="1140.0" y="72.4" width="4" height="135.3" rx="1.5" fill="#d11440" opacity="0.91" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.216s 1 both, breathe 3.25s ease-in-out 1.906s infinite;"/>
+    <rect x="1148.0" y="99.1" width="4" height="81.9" rx="1.5" fill="#d11440" opacity="0.77" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.234s 1 both, breathe 3.40s ease-in-out 1.974s infinite;"/>
+    <rect x="1156.0" y="133.4" width="4" height="13.3" rx="1.5" fill="#d11440" opacity="0.59" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.252s 1 both, breathe 2.80s ease-in-out 1.792s infinite;"/>
+    <rect x="1164.0" y="137.0" width="4" height="6.0" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.270s 1 both, breathe 2.95s ease-in-out 1.860s infinite;"/>
+    <rect x="1172.0" y="135.7" width="4" height="8.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.288s 1 both, breathe 3.10s ease-in-out 1.929s infinite;"/>
+    <rect x="1180.0" y="134.3" width="4" height="11.4" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn 0.42s cubic-bezier(.22,1.61,.36,1) 1.306s 1 both, breathe 3.25s ease-in-out 1.996s infinite;"/>
+  <text x="756" y="224" class="caption reveal" style="animation-delay:.9s">44.1kHz &#183; Silero VAD</text>
 </svg>
