@@ -225,17 +225,28 @@ def icon_field() -> str:
 # separate elements for the same reason position and float are split in
 # icon_field() - a CSS animation on `transform` replaces the property outright,
 # so a moving pupil and a static sclera can't share one transformed element.
-EYES_X, EYES_Y = 1140, 46
-EYES_GAP = 32          # centre-to-centre distance between the two eyes
+#
+# Sized to actually read as eyes rather than a corner detail: each sclera is
+# ~40px wide, drawn with a visible outline (not just a fill) so the shape
+# still reads on the light theme's white background, not only the dark one.
+EYES_X, EYES_Y = 1120, 60
+EYES_GAP = 62          # centre-to-centre distance between the two eyes
+EYE_RX, EYE_RY = 20, 13
 
 
-def eyes_field() -> str:
+def eyes_field(t: dict) -> str:
     def sclera(cx: float) -> str:
-        return f'<path d="M{cx - 13:.1f} 0 Q{cx:.1f} -9 {cx + 13:.1f} 0 Q{cx:.1f} 9 {cx - 13:.1f} 0 Z" fill="#f0f2f5"/>'
+        return (f'<path d="M{cx - EYE_RX:.1f} 0 Q{cx:.1f} {-EYE_RY} {cx + EYE_RX:.1f} 0 '
+                f'Q{cx:.1f} {EYE_RY} {cx - EYE_RX:.1f} 0 Z" '
+                f'fill="#f5f6f8" stroke="{t["muted"]}" stroke-width="1.6"/>')
 
     def pupil(cx: float) -> str:
-        return (f'<circle cx="{cx:.1f}" cy="0" r="4.2" fill="{SIGNAL}"/>'
-                f'<circle cx="{cx - 1.4:.1f}" cy="-1.4" r="1.1" fill="#fff"/>')
+        # dark iris, a thin brand-colour ring instead of a solid red disc,
+        # a black pupil, and a highlight dot - reads as an eye, not a bead.
+        return (f'<circle cx="{cx:.1f}" cy="0" r="7.4" fill="#171a1f"/>'
+                f'<circle cx="{cx:.1f}" cy="0" r="7.4" fill="none" stroke="{SIGNAL}" stroke-width="1.5" opacity="0.85"/>'
+                f'<circle cx="{cx:.1f}" cy="0" r="3.4" fill="#050608"/>'
+                f'<circle cx="{cx - 2.4:.1f}" cy="-2.4" r="1.5" fill="#fff" opacity="0.9"/>')
 
     left, right = -EYES_GAP / 2, EYES_GAP / 2
     return f"""
@@ -282,9 +293,9 @@ def css(t: dict) -> str:
       /* ---------- watching eyes ---------- */
       @keyframes watchEyes {{
         0%, 8%   {{ transform: translateX(0); }}
-        20%, 32% {{ transform: translateX(-5px); }}
+        20%, 32% {{ transform: translateX(-8px); }}
         45%, 55% {{ transform: translateX(0); }}
-        68%, 80% {{ transform: translateX(5px); }}
+        68%, 80% {{ transform: translateX(8px); }}
         92%, 100% {{ transform: translateX(0); }}
       }}
       @keyframes blinkEyes {{
@@ -310,7 +321,7 @@ def build_banner(t: dict) -> str:
   <defs>
     <style>{css(t)}</style>
   </defs>
-{icon_field()}{eyes_field()}
+{icon_field()}{eyes_field(t)}
   <text x="64" y="92"  class="eyebrow reveal" style="animation-delay:.05s">APPLIED AI &#183; BACKEND ENGINEER</text>
   <text x="64" y="152" class="name name-in">Praveen Nukilla</text>
   <text x="64" y="188" class="role reveal"    style="animation-delay:.28s">Speech-AI systems on GCP + Gemini</text>
