@@ -5,6 +5,14 @@
       <stop offset="0.5" stop-color="#d11440" stop-opacity="0.85"/>
       <stop offset="1"   stop-color="#d11440" stop-opacity="0"/>
     </linearGradient>
+    <!-- One pleat, reused by every curtain panel: dark at the folds either
+         side, lit just off centre where the cloth turns towards the light. -->
+    <linearGradient id="pleat" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"    stop-color="#000000" stop-opacity="0.42"/>
+      <stop offset="0.30" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="0.66" stop-color="#000000" stop-opacity="0.08"/>
+      <stop offset="1"    stop-color="#000000" stop-opacity="0.44"/>
+    </linearGradient>
     <style>
       .eyebrow { font: 600 13px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; letter-spacing: .18em; fill: #d11440; }
       .name    { font: 700 46px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; fill: #e6edf3; }
@@ -35,41 +43,41 @@
         100% { transform: scaleY(1); opacity: 1; }
       }
       /* one bar's share of the sweep, at each capped kick size */
-      @keyframes scan0 {{
-        0%   {{ transform: scaleY(1); }}
-        6%   {{ transform: scaleY(1.0); }}
-        22%  {{ transform: scaleY(1.000); }}
-        45%  {{ transform: scaleY(1.02); }}
-        100% {{ transform: scaleY(1); }}
-      }}
-      @keyframes scan1 {{
-        0%   {{ transform: scaleY(1); }}
-        6%   {{ transform: scaleY(1.15); }}
-        22%  {{ transform: scaleY(0.940); }}
-        45%  {{ transform: scaleY(1.02); }}
-        100% {{ transform: scaleY(1); }}
-      }}
-      @keyframes scan2 {{
-        0%   {{ transform: scaleY(1); }}
-        6%   {{ transform: scaleY(1.3); }}
-        22%  {{ transform: scaleY(0.880); }}
-        45%  {{ transform: scaleY(1.02); }}
-        100% {{ transform: scaleY(1); }}
-      }}
-      @keyframes scan3 {{
-        0%   {{ transform: scaleY(1); }}
-        6%   {{ transform: scaleY(1.45); }}
-        22%  {{ transform: scaleY(0.820); }}
-        45%  {{ transform: scaleY(1.02); }}
-        100% {{ transform: scaleY(1); }}
-      }}
-      @keyframes scan4 {{
-        0%   {{ transform: scaleY(1); }}
-        6%   {{ transform: scaleY(1.6); }}
-        22%  {{ transform: scaleY(0.760); }}
-        45%  {{ transform: scaleY(1.02); }}
-        100% {{ transform: scaleY(1); }}
-      }}
+      @keyframes scan0 {
+        0%   { transform: scaleY(1); }
+        6%   { transform: scaleY(1.0); }
+        22%  { transform: scaleY(1.000); }
+        45%  { transform: scaleY(1.02); }
+        100% { transform: scaleY(1); }
+      }
+      @keyframes scan1 {
+        0%   { transform: scaleY(1); }
+        6%   { transform: scaleY(1.15); }
+        22%  { transform: scaleY(0.940); }
+        45%  { transform: scaleY(1.02); }
+        100% { transform: scaleY(1); }
+      }
+      @keyframes scan2 {
+        0%   { transform: scaleY(1); }
+        6%   { transform: scaleY(1.3); }
+        22%  { transform: scaleY(0.880); }
+        45%  { transform: scaleY(1.02); }
+        100% { transform: scaleY(1); }
+      }
+      @keyframes scan3 {
+        0%   { transform: scaleY(1); }
+        6%   { transform: scaleY(1.45); }
+        22%  { transform: scaleY(0.820); }
+        45%  { transform: scaleY(1.02); }
+        100% { transform: scaleY(1); }
+      }
+      @keyframes scan4 {
+        0%   { transform: scaleY(1); }
+        6%   { transform: scaleY(1.6); }
+        22%  { transform: scaleY(0.760); }
+        45%  { transform: scaleY(1.02); }
+        100% { transform: scaleY(1); }
+      }
 
       .playhead { opacity: 0; animation: sweep 2.8s linear 1.5s infinite backwards; }
       @keyframes sweep {
@@ -88,88 +96,108 @@
       @keyframes recPop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
       @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
 
-      /* ---------- the bot ---------- */
+      /* ---------- the curtain ---------- */
 
-      /* arrives with a settle rather than a fade */
-      .bot-in { animation: botIn .9s cubic-bezier(.2,1.32,.36,1) .45s backwards; }
-      @keyframes botIn {
-        from { opacity: 0; transform: translateY(-38px) scale(.86); }
-        to   { opacity: 1; transform: translateY(0)     scale(1); }
-      }
+      /* Every panel runs for the same length with no delay and no fill mode,
+         so frame zero is the only state a frozen renderer can show - and frame
+         zero is the cloth still above the frame, out of sight. The panel then
+         drops in, holds, and falls away; its last keyframe is the resting
+         position the markup already draws, so nothing snaps when it ends.
 
-      /* hovering, on a period that shares no factor with the sweep */
-      .bob { animation: bob 4.3s ease-in-out 1.3s infinite; }
-      @keyframes bob {
-        0%, 100% { transform: translateY(-3px); }
-        50%      { transform: translateY(3px); }
+         The falls are shaped like gravity - slow to let go, fastest at the
+         end. An ease-out would read as the cloth being lowered on a winch. */
+      .drape { animation-duration: 1.6s; animation-timing-function: linear; }
+      .d0 { animation-name: fall0; }
+      @keyframes fall0 {
+        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        20%     { transform: translateY(-360px); }
+        34%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        72%   { transform: translateY(0); }
+        100%    { transform: translateY(0); }
       }
-
-      /* the head leads the eye: it turns to the name, then tracks the panel */
-      .head-turn {
-        animation: headLook 2.8s cubic-bezier(.3,1.3,.4,1) 1.5s both,
-                   headTrack 2.8s linear 4.3s infinite;
+      .d1 { animation-name: fall1; }
+      @keyframes fall1 {
+        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        20%     { transform: translateY(-360px); }
+        37.5%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        75.5%   { transform: translateY(0); }
+        100%    { transform: translateY(0); }
       }
-      @keyframes headLook {
-        0%   { transform: rotate(0deg); }
-        18%  { transform: rotate(-4.5deg); }
-        70%  { transform: rotate(-4.5deg); }
-        100% { transform: rotate(-2.6deg); }
+      .d2 { animation-name: fall2; }
+      @keyframes fall2 {
+        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        20%     { transform: translateY(-360px); }
+        41%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        79%   { transform: translateY(0); }
+        100%    { transform: translateY(0); }
       }
-      @keyframes headTrack {
-        from { transform: rotate(-2.6deg); }
-        to   { transform: rotate(2.6deg); }
+      .d3 { animation-name: fall3; }
+      @keyframes fall3 {
+        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        20%     { transform: translateY(-360px); }
+        44.5%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        82.5%   { transform: translateY(0); }
+        100%    { transform: translateY(0); }
       }
-
-      /* boot: the aperture opens */
-      .iris-open { animation: irisOpen .42s cubic-bezier(.3,1.4,.4,1) 1.05s backwards; }
-      @keyframes irisOpen { from { transform: scale(.05); } to { transform: scale(1); } }
-
-      /* blink on twice the sweep period, so it never lands mid-saccade */
-      .lid { animation: blink 5.6s ease-in-out 5.4s infinite; }
-      @keyframes blink {
-        0%, 91%, 100% { transform: scaleY(1); }
-        94%           { transform: scaleY(.06); }
-        97%           { transform: scaleY(1); }
+      .d4 { animation-name: fall4; }
+      @keyframes fall4 {
+        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        20%     { transform: translateY(-360px); }
+        48%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        86%   { transform: translateY(0); }
+        100%    { transform: translateY(0); }
       }
-
-      /* The pupil reads the name first, then hands off to the playhead. The
-         look ends exactly where the track begins, so the handoff at
-         TRACK_START is seamless rather than a jump. */
-      .pupil {
-        animation: pupilLook 2.8s cubic-bezier(.3,1.5,.4,1) 1.5s both,
-                   pupilTrack 2.8s linear 4.3s infinite;
+      .d5 { animation-name: fall5; }
+      @keyframes fall5 {
+        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        20%     { transform: translateY(-360px); }
+        51.5%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        89.5%   { transform: translateY(0); }
+        100%    { transform: translateY(0); }
       }
-      @keyframes pupilLook {
-        0%   { transform: translateX(0); }
-        14%  { transform: translateX(-11px); }
-        70%  { transform: translateX(-11px); }
-        84%  { transform: translateX(-3px); }
-        100% { transform: translateX(-11px); }
+      .d6 { animation-name: fall6; }
+      @keyframes fall6 {
+        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        20%     { transform: translateY(-360px); }
+        55%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        93%   { transform: translateY(0); }
+        100%    { transform: translateY(0); }
       }
-      @keyframes pupilTrack {
-        from { transform: translateX(-11px); }
-        to   { transform: translateX(11px); }
+      .d7 { animation-name: fall7; }
+      @keyframes fall7 {
+        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        20%     { transform: translateY(-360px); }
+        58.5%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        96.5%   { transform: translateY(0); }
+        100%    { transform: translateY(0); }
+      }
+      .d8 { animation-name: fall8; }
+      @keyframes fall8 {
+        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        20%     { transform: translateY(-360px); }
+        62%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
+        100%   { transform: translateY(0); }
+        100%    { transform: translateY(0); }
       }
 
       /* The playhead is pure motion - it carries no content. Unlike everything
          else here it rests at opacity 0, because a playhead parked at the left
          edge of a still frame reads as a stray rule, not as a composed panel. */
 
-      .live {
-        transform-box: fill-box; transform-origin: center;
-        animation: recPop .34s cubic-bezier(.34,1.56,.64,1) 1.9s backwards,
-                   pulse 1.7s ease-in-out 2.2s infinite;
-      }
-
       @media (prefers-reduced-motion: reduce) {
-        .bar, .reveal, .name-in, .panel-border, .rec-dot,
-        .bot-in, .bob, .head-turn, .iris-open, .lid, .pupil, .live {
+        .bar, .reveal, .name-in, .panel-border, .rec-dot {
           animation: none !important;
           opacity: 1 !important;
           transform: none !important;
           stroke-dashoffset: 0 !important;
         }
         .playhead { animation: none !important; opacity: 0 !important; }
+        /* Killing the animation is enough to hide the curtain - its resting
+           position is already below the frame. Don't add transform:none to
+           the rule above and sweep this in with it: that is a no-op here, but
+           it would also stop this comment being true if the panels were ever
+           drawn on top of the frame instead. */
+        .drape { animation: none !important; }
       }
 </style>
   </defs>
@@ -244,45 +272,78 @@
   </g>
   <text x="756" y="224" class="caption reveal" style="animation-delay:.9s">44.1kHz &#183; Silero VAD</text>
 
-  <g class="bot-in">
-    <g transform="translate(614,150)">
-      <g class="bob">
-        <g class="head-turn">
-          <!-- antenna -->
-          <rect x="-2" y="-84" width="4" height="26" rx="2" fill="#8b949e"/>
-          <circle cx="0" cy="-88" r="4.5" fill="#d11440" class="live"/>
-
-          <!-- shell -->
-          <rect x="-54" y="-58" width="108" height="94" rx="24" fill="#c9d1d9"/>
-          <rect x="-54" y="-58" width="108" height="94" rx="24" fill="none" stroke="#8b949e" stroke-width="1.5" opacity="0.5"/>
-          <!-- side mounts -->
-          <rect x="-62" y="-24" width="9" height="26" rx="4" fill="#8b949e"/>
-          <rect x="53" y="-24" width="9" height="26" rx="4" fill="#8b949e"/>
-
-          <!-- visor -->
-          <rect x="-44" y="-46" width="88" height="62" rx="18" fill="#0d1117"/>
-
-          <!-- eye -->
-          <g transform="translate(0,-14)">
-            <g class="lid">
-              <g class="iris-open">
-                <circle r="24" fill="#161b22"/>
-                <circle r="24" fill="none" stroke="#d11440" stroke-width="1.5" opacity="0.55"/>
-                <g class="pupil">
-                  <circle r="12" fill="#d11440"/>
-                  <circle r="5.5" fill="#0d1117"/>
-                  <circle cx="-4.5" cy="-5" r="3" fill="#ffffff" opacity="0.75"/>
-                </g>
-              </g>
-            </g>
-          </g>
-
-          <!-- vent, and the thruster nubs it hovers on -->
-          <path d="M -22 26 H 22 M -16 32 H 16" stroke="#8b949e" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
-          <rect x="-30" y="35" width="16" height="8" rx="4" fill="#8b949e"/>
-          <rect x="14" y="35" width="16" height="8" rx="4" fill="#8b949e"/>
-        </g>
-      </g>
+  <g class="curtain" aria-hidden="true">
+    <g class="drape d0">
+      <rect x="-0.5" y="320" width="134.3" height="360" fill="#d11440"/>
+      <rect x="-0.5" y="320" width="134.3" height="360" fill="url(#pleat)"/>
+      <!-- The top edge is what leads the fall, so it carries the detail: a lit
+           fold, and the shadow the fold throws down the cloth beneath it. -->
+      <rect x="-0.5" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
+      <rect x="-0.5" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
+    </g>
+    <g class="drape d1">
+      <rect x="132.8" y="320" width="134.3" height="360" fill="#d11440"/>
+      <rect x="132.8" y="320" width="134.3" height="360" fill="url(#pleat)"/>
+      <!-- The top edge is what leads the fall, so it carries the detail: a lit
+           fold, and the shadow the fold throws down the cloth beneath it. -->
+      <rect x="132.8" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
+      <rect x="132.8" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
+    </g>
+    <g class="drape d2">
+      <rect x="266.2" y="320" width="134.3" height="360" fill="#d11440"/>
+      <rect x="266.2" y="320" width="134.3" height="360" fill="url(#pleat)"/>
+      <!-- The top edge is what leads the fall, so it carries the detail: a lit
+           fold, and the shadow the fold throws down the cloth beneath it. -->
+      <rect x="266.2" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
+      <rect x="266.2" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
+    </g>
+    <g class="drape d3">
+      <rect x="399.5" y="320" width="134.3" height="360" fill="#d11440"/>
+      <rect x="399.5" y="320" width="134.3" height="360" fill="url(#pleat)"/>
+      <!-- The top edge is what leads the fall, so it carries the detail: a lit
+           fold, and the shadow the fold throws down the cloth beneath it. -->
+      <rect x="399.5" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
+      <rect x="399.5" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
+    </g>
+    <g class="drape d4">
+      <rect x="532.8" y="320" width="134.3" height="360" fill="#d11440"/>
+      <rect x="532.8" y="320" width="134.3" height="360" fill="url(#pleat)"/>
+      <!-- The top edge is what leads the fall, so it carries the detail: a lit
+           fold, and the shadow the fold throws down the cloth beneath it. -->
+      <rect x="532.8" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
+      <rect x="532.8" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
+    </g>
+    <g class="drape d5">
+      <rect x="666.2" y="320" width="134.3" height="360" fill="#d11440"/>
+      <rect x="666.2" y="320" width="134.3" height="360" fill="url(#pleat)"/>
+      <!-- The top edge is what leads the fall, so it carries the detail: a lit
+           fold, and the shadow the fold throws down the cloth beneath it. -->
+      <rect x="666.2" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
+      <rect x="666.2" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
+    </g>
+    <g class="drape d6">
+      <rect x="799.5" y="320" width="134.3" height="360" fill="#d11440"/>
+      <rect x="799.5" y="320" width="134.3" height="360" fill="url(#pleat)"/>
+      <!-- The top edge is what leads the fall, so it carries the detail: a lit
+           fold, and the shadow the fold throws down the cloth beneath it. -->
+      <rect x="799.5" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
+      <rect x="799.5" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
+    </g>
+    <g class="drape d7">
+      <rect x="932.8" y="320" width="134.3" height="360" fill="#d11440"/>
+      <rect x="932.8" y="320" width="134.3" height="360" fill="url(#pleat)"/>
+      <!-- The top edge is what leads the fall, so it carries the detail: a lit
+           fold, and the shadow the fold throws down the cloth beneath it. -->
+      <rect x="932.8" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
+      <rect x="932.8" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
+    </g>
+    <g class="drape d8">
+      <rect x="1066.2" y="320" width="134.3" height="360" fill="#d11440"/>
+      <rect x="1066.2" y="320" width="134.3" height="360" fill="url(#pleat)"/>
+      <!-- The top edge is what leads the fall, so it carries the detail: a lit
+           fold, and the shadow the fold throws down the cloth beneath it. -->
+      <rect x="1066.2" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
+      <rect x="1066.2" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
     </g>
   </g>
 </svg>

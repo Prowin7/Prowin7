@@ -4,21 +4,24 @@ Regenerate assets/banner-dark.svg, assets/banner-light.svg and assets/rule.svg.
 
 Layout
 ------
-The mic hangs from above into the vertical corridor between the text block and
-the SIGNAL panel. The previous version reached in on a long boom from the right
-and had three problems that only showed up on the live profile, where the
-README column scales the banner down: the arm ran along the panel's bottom edge
-and its collar overlapped the border, the arm itself read as a thin scratch
-across the whole banner rather than as an object, and the bottom-left corner was
-dead space. Dropping in from above removes all three - the corridor at x 490-740
-is empty at every height, so nothing has to dodge anything, and the frame is
-back to 1200x320 with no empty band.
+Text block on the left, SIGNAL panel on the right, and a curtain that covers
+the whole 1200x320 frame for the first moment of the reveal. Nothing is parked
+in the corridor at x 490-740 any more: the character that used to hover there
+(a listening unit, and a boom mic before that) is gone, and the curtain needs
+the full width, so the corridor is now plain breathing room between the two
+blocks rather than a slot something has to fit into.
 
 Motion
 ------
-The mic drops in, drags behind its mount, swings past plumb and settles, then
-idles on two periods that do not divide into each other, so the mount and the
-capsule never look mechanically locked.
+The curtain drops. One cloth in nine vertical panels: they fall in together
+from above the frame, hold there covering the banner, then let go one after
+another from the left, so the reveal travels across the frame instead of
+lifting as a slab. Each panel falls top edge first and keeps going past the
+bottom, which is why every part of the banner is revealed from the top down.
+
+The panels are drawn below the frame and spend the whole animation above where
+they were drawn (see Constraints), so the run ends with the cloth already at
+its markup position - nothing is held by a fill mode and nothing snaps.
 
 The SIGNAL panel is no longer decorative. A playhead sweeps it on a loop and
 each bar kicks as the playhead reaches it - the bars' animation delays are
@@ -34,6 +37,21 @@ so there is no SMIL and no JS here.
 Every animated element rests at its FINAL state and animates in from a keyframed
 start with fill-mode backwards. A renderer that declines to run the animations
 then shows the composed banner rather than an empty frame.
+
+That rule is weaker than it looks, and the curtain is why it had to be written
+down. "Animations do not run" is not the only failure - they can also be *held
+at time zero*. A browser pauses CSS animations in a hidden or backgrounded tab,
+and screenshot tooling captures whatever the first frame is. Verified while
+building this (2026-08-20): with the tab hidden, every element sat on its own
+first keyframe indefinitely, which for the text means the banner renders as a
+bare SIGNAL panel with no name on it.
+
+For the text that is cosmetic. For anything that covers the frame it is fatal:
+a curtain whose first keyframe is the covering position is a curtain that
+never comes up. So the curtain takes the stricter rule - frame zero is
+off-stage, and no animation-delay anywhere, since a delay makes frame zero last
+as long as the delay does. Anything added later that can occlude the banner
+needs the same treatment.
 """
 
 import pathlib
@@ -44,13 +62,22 @@ ASSETS = ROOT / "assets"
 
 W, H = 1200, 320
 
-# The bot floats in the corridor between the text block (which ends at x~478)
-# and the SIGNAL panel (which starts at x=740).
-BOT_X, BOT_Y = 614, 150
-EYE_Y = -14               # eye centre, relative to the bot's own origin
-PUPIL_THROW = 11          # how far the pupil travels to either side
-LENS_R = 24               # must clear PUPIL_THROW + the iris radius, or the
-                          # iris bleeds off the lens at the ends of the sweep
+# The curtain. Panels overhang the frame by OVERHANG at the top so that a
+# panel still mid-fall never shows a gap above its own top edge.
+#
+# One animation per panel, all the same length, all starting together - the
+# stagger lives inside the keyframes (see curtain_keyframes) rather than in
+# animation-delay. That is forced by the freeze described in Constraints: a
+# delayed animation shows its *first* keyframe for the length of the delay, and
+# a renderer stopped at t=0 shows it forever, so the covering position can
+# never be frame zero of anything.
+CURTAIN_PANELS = 9
+OVERHANG = 40
+CURTAIN_DUR = 1.6         # whole run: drop in, hold, peel away left to right
+DROP_PCT = 20             # cloth has arrived and covers the frame
+HOLD_PCT = 34             # leftmost panel starts falling away
+HOLD_STEP = 3.5           # each panel waits this much longer than its left neighbour
+FALL_PCT = 38             # a panel's own fall, frame top to clear of the bottom
 
 # Playhead sweep across the SIGNAL panel. The bars derive their timing from
 # these, so the kick and the playhead cannot drift apart.
@@ -59,11 +86,6 @@ SCAN_X0, SCAN_X1 = 750, 1150
 SCAN_PERIOD = 2.8         # seconds for one sweep
 SCAN_START = 1.5          # after the bars have risen
 
-# The bot spends its first sweep reading the name, then locks onto the panel.
-# Offsetting by a whole period keeps the pupil in phase with the playhead: both
-# are driven from these two constants, so they cannot drift apart.
-LOOK_START = 1.5
-TRACK_START = SCAN_START + SCAN_PERIOD
 PANEL_INNER = 176         # usable height inside the panel border
 
 # A bar's kick is capped so a tall bar cannot scale out through the panel
@@ -78,14 +100,10 @@ SIGNAL = "#d11440"
 THEMES = {
     "dark": dict(
         name="#e6edf3", muted="#8b949e", stroke="#30363d",
-        metal="#c9d1d9", metal_dark="#8b949e",
-        visor="#0d1117", lens="#161b22",
         scan_op="0.85",
     ),
     "light": dict(
         name="#0d1117", muted="#57606a", stroke="#d0d7de",
-        metal="#57606a", metal_dark="#8c959f",
-        visor="#161b22", lens="#0d1117",
         scan_op="0.7",
     ),
 }
@@ -121,17 +139,61 @@ def scan_bucket(height: float) -> int:
 
 
 def scan_keyframes() -> str:
-    """One keyframe set per kick size: a hit as the playhead arrives, then decay."""
+    """
+    One keyframe set per kick size: a hit as the playhead arrives, then decay.
+
+    Two braces, not four. This function's own f-string collapses `{{` to `{`,
+    and the result is *interpolated* into css()'s f-string rather than formatted
+    again - so four braces reached the stylesheet as a literal `{{`, which is
+    not valid CSS. Every @keyframes scan* block was being dropped by the parser,
+    and the bars, whose animation names those blocks, silently never kicked.
+    """
     out = []
     for i, k in enumerate(SCAN_STEPS):
         dip = 1 - (k - 1) * 0.4          # louder kick, deeper trough after it
-        out.append(f"""      @keyframes scan{i} {{{{
-        0%   {{{{ transform: scaleY(1); }}}}
-        6%   {{{{ transform: scaleY({k}); }}}}
-        22%  {{{{ transform: scaleY({dip:.3f}); }}}}
-        45%  {{{{ transform: scaleY(1.02); }}}}
-        100% {{{{ transform: scaleY(1); }}}}
-      }}}}""")
+        out.append(f"""      @keyframes scan{i} {{
+        0%   {{ transform: scaleY(1); }}
+        6%   {{ transform: scaleY({k}); }}
+        22%  {{ transform: scaleY({dip:.3f}); }}
+        45%  {{ transform: scaleY(1.02); }}
+        100% {{ transform: scaleY(1); }}
+      }}""")
+    return "\n".join(out)
+
+
+def curtain_keyframes() -> str:
+    """
+    One keyframe set per curtain panel, plus the rule that names it.
+
+    Three positions, in the panel's own coordinates (it is drawn one frame
+    height below the viewBox, so 0 means off-stage below):
+
+        ABOVE   - a whole frame further up again, out of sight over the top
+        COVER   - exactly over the frame
+        0       - back where the markup drew it, off-stage below
+
+    All nine share ABOVE -> COVER, so the cloth arrives as one sheet. They part
+    company at the hold: panel i waits HOLD_STEP longer than the panel to its
+    left before letting go, which is what makes the reveal travel across the
+    frame instead of dropping as a slab. Every panel's fall is the same length
+    (FALL_PCT), so a panel that waited longer does not also fall faster.
+    """
+    above = 2 * H + 2 * OVERHANG
+    cover = H + OVERHANG
+    ease = "cubic-bezier(.55,.06,.68,.19)"
+
+    out = []
+    for i in range(CURTAIN_PANELS):
+        hold = HOLD_PCT + i * HOLD_STEP
+        landed = hold + FALL_PCT
+        out.append(f"""      .d{i} {{ animation-name: fall{i}; }}
+      @keyframes fall{i} {{
+        0%      {{ transform: translateY(-{above}px); animation-timing-function: {ease}; }}
+        {DROP_PCT}%     {{ transform: translateY(-{cover}px); }}
+        {hold:g}%   {{ transform: translateY(-{cover}px); animation-timing-function: {ease}; }}
+        {landed:g}%   {{ transform: translateY(0); }}
+        100%    {{ transform: translateY(0); }}
+      }}""")
     return "\n".join(out)
 
 
@@ -210,144 +272,77 @@ def css(t: dict) -> str:
       @keyframes recPop {{ from {{ transform: scale(0); opacity: 0; }} to {{ transform: scale(1); opacity: 1; }} }}
       @keyframes pulse {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: .35; }} }}
 
-      /* ---------- the bot ---------- */
+      /* ---------- the curtain ---------- */
 
-      /* arrives with a settle rather than a fade */
-      .bot-in {{ animation: botIn .9s cubic-bezier(.2,1.32,.36,1) .45s backwards; }}
-      @keyframes botIn {{
-        from {{ opacity: 0; transform: translateY(-38px) scale(.86); }}
-        to   {{ opacity: 1; transform: translateY(0)     scale(1); }}
-      }}
+      /* Every panel runs for the same length with no delay and no fill mode,
+         so frame zero is the only state a frozen renderer can show - and frame
+         zero is the cloth still above the frame, out of sight. The panel then
+         drops in, holds, and falls away; its last keyframe is the resting
+         position the markup already draws, so nothing snaps when it ends.
 
-      /* hovering, on a period that shares no factor with the sweep */
-      .bob {{ animation: bob 4.3s ease-in-out 1.3s infinite; }}
-      @keyframes bob {{
-        0%, 100% {{ transform: translateY(-3px); }}
-        50%      {{ transform: translateY(3px); }}
-      }}
-
-      /* the head leads the eye: it turns to the name, then tracks the panel */
-      .head-turn {{
-        animation: headLook {SCAN_PERIOD}s cubic-bezier(.3,1.3,.4,1) {LOOK_START}s both,
-                   headTrack {SCAN_PERIOD}s linear {TRACK_START}s infinite;
-      }}
-      @keyframes headLook {{
-        0%   {{ transform: rotate(0deg); }}
-        18%  {{ transform: rotate(-4.5deg); }}
-        70%  {{ transform: rotate(-4.5deg); }}
-        100% {{ transform: rotate(-2.6deg); }}
-      }}
-      @keyframes headTrack {{
-        from {{ transform: rotate(-2.6deg); }}
-        to   {{ transform: rotate(2.6deg); }}
-      }}
-
-      /* boot: the aperture opens */
-      .iris-open {{ animation: irisOpen .42s cubic-bezier(.3,1.4,.4,1) 1.05s backwards; }}
-      @keyframes irisOpen {{ from {{ transform: scale(.05); }} to {{ transform: scale(1); }} }}
-
-      /* blink on twice the sweep period, so it never lands mid-saccade */
-      .lid {{ animation: blink {SCAN_PERIOD * 2}s ease-in-out {TRACK_START + 1.1}s infinite; }}
-      @keyframes blink {{
-        0%, 91%, 100% {{ transform: scaleY(1); }}
-        94%           {{ transform: scaleY(.06); }}
-        97%           {{ transform: scaleY(1); }}
-      }}
-
-      /* The pupil reads the name first, then hands off to the playhead. The
-         look ends exactly where the track begins, so the handoff at
-         TRACK_START is seamless rather than a jump. */
-      .pupil {{
-        animation: pupilLook {SCAN_PERIOD}s cubic-bezier(.3,1.5,.4,1) {LOOK_START}s both,
-                   pupilTrack {SCAN_PERIOD}s linear {TRACK_START}s infinite;
-      }}
-      @keyframes pupilLook {{
-        0%   {{ transform: translateX(0); }}
-        14%  {{ transform: translateX(-{PUPIL_THROW}px); }}
-        70%  {{ transform: translateX(-{PUPIL_THROW}px); }}
-        84%  {{ transform: translateX(-3px); }}
-        100% {{ transform: translateX(-{PUPIL_THROW}px); }}
-      }}
-      @keyframes pupilTrack {{
-        from {{ transform: translateX(-{PUPIL_THROW}px); }}
-        to   {{ transform: translateX({PUPIL_THROW}px); }}
-      }}
+         The falls are shaped like gravity - slow to let go, fastest at the
+         end. An ease-out would read as the cloth being lowered on a winch. */
+      .drape {{ animation-duration: {CURTAIN_DUR}s; animation-timing-function: linear; }}
+{curtain_keyframes()}
 
       /* The playhead is pure motion - it carries no content. Unlike everything
          else here it rests at opacity 0, because a playhead parked at the left
          edge of a still frame reads as a stray rule, not as a composed panel. */
 
-      .live {{
-        transform-box: fill-box; transform-origin: center;
-        animation: recPop .34s cubic-bezier(.34,1.56,.64,1) 1.9s backwards,
-                   pulse 1.7s ease-in-out 2.2s infinite;
-      }}
-
       @media (prefers-reduced-motion: reduce) {{
-        .bar, .reveal, .name-in, .panel-border, .rec-dot,
-        .bot-in, .bob, .head-turn, .iris-open, .lid, .pupil, .live {{
+        .bar, .reveal, .name-in, .panel-border, .rec-dot {{
           animation: none !important;
           opacity: 1 !important;
           transform: none !important;
           stroke-dashoffset: 0 !important;
         }}
         .playhead {{ animation: none !important; opacity: 0 !important; }}
+        /* Killing the animation is enough to hide the curtain - its resting
+           position is already below the frame. Don't add transform:none to
+           the rule above and sweep this in with it: that is a no-op here, but
+           it would also stop this comment being true if the panels were ever
+           drawn on top of the frame instead. */
+        .drape {{ animation: none !important; }}
       }}
 """
 
 
-def bot(t: dict) -> str:
+def curtain() -> str:
     """
-    The listening unit.
+    The curtain: one cloth, cut into vertical panels that fall in sequence.
 
-    Transform origins come from nested translate/rotate group pairs rather than
-    CSS transform-origin, so they do not depend on transform-box support: each
-    animated group transforms about its own local origin and the wrapper before
-    it puts that origin where the joint is. The eye stack is
-    lid > iris > pupil, all nested, so blinking, opening and looking compose
-    instead of overwriting one another's transform.
+    Each panel is drawn starting at y=H - that is, immediately *below* the
+    frame, where none of it is visible. Everything the panel does happens in
+    the animation, which starts it further above the frame than the frame is
+    tall and ends it back here. Reading the markup alone therefore shows the
+    finished banner, which is the fallback this file is built around.
+
+    Panels are 1px wider than their share and start half a pixel early, so
+    neighbours overlap rather than leaving a hairline of banner showing
+    between them when the renderer rounds their edges to device pixels.
+
+    The panel is only two rects deep: the flat crimson, then a horizontal
+    gradient over it that darkens both edges and lifts the middle. That is
+    what makes a flat fill read as a hanging pleat, and it costs one shared
+    gradient rather than per-panel shading.
     """
+    span = W / CURTAIN_PANELS
+    panels = []
+    for i in range(CURTAIN_PANELS):
+        x = i * span - 0.5
+        w = span + 1
+        panels.append(f"""
+    <g class="drape d{i}">
+      <rect x="{x:.1f}" y="{H}" width="{w:.1f}" height="{H + OVERHANG}" fill="{SIGNAL}"/>
+      <rect x="{x:.1f}" y="{H}" width="{w:.1f}" height="{H + OVERHANG}" fill="url(#pleat)"/>
+      <!-- The top edge is what leads the fall, so it carries the detail: a lit
+           fold, and the shadow the fold throws down the cloth beneath it. -->
+      <rect x="{x:.1f}" y="{H}" width="{w:.1f}" height="6" fill="#ffffff" opacity="0.22"/>
+      <rect x="{x:.1f}" y="{H + 6}" width="{w:.1f}" height="12" fill="#000000" opacity="0.16"/>
+    </g>""")
+
     return f"""
-  <g class="bot-in">
-    <g transform="translate({BOT_X},{BOT_Y})">
-      <g class="bob">
-        <g class="head-turn">
-          <!-- antenna -->
-          <rect x="-2" y="-84" width="4" height="26" rx="2" fill="{t['metal_dark']}"/>
-          <circle cx="0" cy="-88" r="4.5" fill="{SIGNAL}" class="live"/>
-
-          <!-- shell -->
-          <rect x="-54" y="-58" width="108" height="94" rx="24" fill="{t['metal']}"/>
-          <rect x="-54" y="-58" width="108" height="94" rx="24" fill="none" stroke="{t['metal_dark']}" stroke-width="1.5" opacity="0.5"/>
-          <!-- side mounts -->
-          <rect x="-62" y="-24" width="9" height="26" rx="4" fill="{t['metal_dark']}"/>
-          <rect x="53" y="-24" width="9" height="26" rx="4" fill="{t['metal_dark']}"/>
-
-          <!-- visor -->
-          <rect x="-44" y="-46" width="88" height="62" rx="18" fill="{t['visor']}"/>
-
-          <!-- eye -->
-          <g transform="translate(0,{EYE_Y})">
-            <g class="lid">
-              <g class="iris-open">
-                <circle r="{LENS_R}" fill="{t['lens']}"/>
-                <circle r="{LENS_R}" fill="none" stroke="{SIGNAL}" stroke-width="1.5" opacity="0.55"/>
-                <g class="pupil">
-                  <circle r="12" fill="{SIGNAL}"/>
-                  <circle r="5.5" fill="{t['visor']}"/>
-                  <circle cx="-4.5" cy="-5" r="3" fill="#ffffff" opacity="0.75"/>
-                </g>
-              </g>
-            </g>
-          </g>
-
-          <!-- vent, and the thruster nubs it hovers on -->
-          <path d="M -22 26 H 22 M -16 32 H 16" stroke="{t['metal_dark']}" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
-          <rect x="-30" y="35" width="16" height="8" rx="4" fill="{t['metal_dark']}"/>
-          <rect x="14" y="35" width="16" height="8" rx="4" fill="{t['metal_dark']}"/>
-        </g>
-      </g>
-    </g>
+  <g class="curtain" aria-hidden="true">{''.join(panels)}
   </g>
 """
 
@@ -359,6 +354,14 @@ def build_banner(t: dict, bars: str) -> str:
       <stop offset="0"   stop-color="{SIGNAL}" stop-opacity="0"/>
       <stop offset="0.5" stop-color="{SIGNAL}" stop-opacity="{t['scan_op']}"/>
       <stop offset="1"   stop-color="{SIGNAL}" stop-opacity="0"/>
+    </linearGradient>
+    <!-- One pleat, reused by every curtain panel: dark at the folds either
+         side, lit just off centre where the cloth turns towards the light. -->
+    <linearGradient id="pleat" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"    stop-color="#000000" stop-opacity="0.42"/>
+      <stop offset="0.30" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="0.66" stop-color="#000000" stop-opacity="0.08"/>
+      <stop offset="1"    stop-color="#000000" stop-opacity="0.44"/>
     </linearGradient>
     <style>{css(t)}</style>
   </defs>
@@ -379,7 +382,7 @@ def build_banner(t: dict, bars: str) -> str:
     <rect x="{SCAN_X0}" y="52" width="2" height="176" fill="url(#scanfade)"/>
   </g>
   <text x="756" y="224" class="caption reveal" style="animation-delay:.9s">44.1kHz &#183; Silero VAD</text>
-{bot(t)}</svg>
+{curtain()}</svg>
 """
 
 
