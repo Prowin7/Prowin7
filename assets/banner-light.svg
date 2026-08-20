@@ -1,24 +1,10 @@
 <svg width="1200" height="320" viewBox="0 0 1200 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Praveen Nukilla &#8212; Applied AI &amp; Backend Engineer">
   <defs>
-    <linearGradient id="scanfade" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0"   stop-color="#d11440" stop-opacity="0"/>
-      <stop offset="0.5" stop-color="#d11440" stop-opacity="0.7"/>
-      <stop offset="1"   stop-color="#d11440" stop-opacity="0"/>
-    </linearGradient>
-    <!-- One pleat, reused by every curtain panel: dark at the folds either
-         side, lit just off centre where the cloth turns towards the light. -->
-    <linearGradient id="pleat" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0"    stop-color="#000000" stop-opacity="0.42"/>
-      <stop offset="0.30" stop-color="#ffffff" stop-opacity="0.10"/>
-      <stop offset="0.66" stop-color="#000000" stop-opacity="0.08"/>
-      <stop offset="1"    stop-color="#000000" stop-opacity="0.44"/>
-    </linearGradient>
     <style>
       .eyebrow { font: 600 13px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; letter-spacing: .18em; fill: #d11440; }
       .name    { font: 700 46px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; fill: #0d1117; }
       .role    { font: 400 20px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; fill: #57606a; }
       .caption { font: 400 13px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; fill: #57606a; letter-spacing: .02em; }
-      .label   { font: 600 11px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; letter-spacing: .2em; fill: #57606a; }
 
       /* Every animated element below rests at its FINAL state and animates in
          from a keyframed start with fill-mode backwards, so a renderer that
@@ -37,313 +23,121 @@
         100% { opacity: 1; transform: translateY(0)    scale(1, 1); }
       }
 
-      @keyframes riseIn {
-        0%   { transform: scaleY(0); opacity: 0; }
-        55%  { transform: scaleY(1.12); opacity: 1; }
-        100% { transform: scaleY(1); opacity: 1; }
+      /* ---------- floating icon field ---------- */
+      @keyframes floatA {
+        0%   { transform: translateY(0) rotate(0deg); }
+        50%  { transform: translateY(-9px) rotate(-3deg); }
+        100% { transform: translateY(0) rotate(0deg); }
       }
-      /* one bar's share of the sweep, at each capped kick size */
-      @keyframes scan0 {
-        0%   { transform: scaleY(1); }
-        6%   { transform: scaleY(1.0); }
-        22%  { transform: scaleY(1.000); }
-        45%  { transform: scaleY(1.02); }
-        100% { transform: scaleY(1); }
+      @keyframes floatB {
+        0%   { transform: translateY(0) rotate(0deg); }
+        50%  { transform: translateY(7px) rotate(2.5deg); }
+        100% { transform: translateY(0) rotate(0deg); }
       }
-      @keyframes scan1 {
-        0%   { transform: scaleY(1); }
-        6%   { transform: scaleY(1.15); }
-        22%  { transform: scaleY(0.940); }
-        45%  { transform: scaleY(1.02); }
-        100% { transform: scaleY(1); }
+      @keyframes floatC {
+        0%   { transform: translateY(0) rotate(0deg); }
+        50%  { transform: translateY(-6px) rotate(3deg); }
+        100% { transform: translateY(0) rotate(0deg); }
       }
-      @keyframes scan2 {
-        0%   { transform: scaleY(1); }
-        6%   { transform: scaleY(1.3); }
-        22%  { transform: scaleY(0.880); }
-        45%  { transform: scaleY(1.02); }
-        100% { transform: scaleY(1); }
-      }
-      @keyframes scan3 {
-        0%   { transform: scaleY(1); }
-        6%   { transform: scaleY(1.45); }
-        22%  { transform: scaleY(0.820); }
-        45%  { transform: scaleY(1.02); }
-        100% { transform: scaleY(1); }
-      }
-      @keyframes scan4 {
-        0%   { transform: scaleY(1); }
-        6%   { transform: scaleY(1.6); }
-        22%  { transform: scaleY(0.760); }
-        45%  { transform: scaleY(1.02); }
-        100% { transform: scaleY(1); }
-      }
-
-      .playhead { opacity: 0; animation: sweep 2.8s linear 1.5s infinite backwards; }
-      @keyframes sweep {
-        from { opacity: 1; transform: translateX(0); }
-        to   { opacity: 1; transform: translateX(400px); }
-      }
-
-      .panel-border { stroke-dasharray: 100; animation: draw .55s ease-out .05s backwards; }
-      @keyframes draw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
-
-      .rec-dot {
-        transform-box: fill-box; transform-origin: center;
-        animation: recPop .3s cubic-bezier(.34,1.56,.64,1) .65s backwards,
-                   pulse 1.7s ease-in-out .95s infinite;
-      }
-      @keyframes recPop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-
-      /* ---------- the curtain ---------- */
-
-      /* Every panel runs for the same length with no delay and no fill mode,
-         so frame zero is the only state a frozen renderer can show - and frame
-         zero is the cloth still above the frame, out of sight. The panel then
-         drops in, holds, and falls away; its last keyframe is the resting
-         position the markup already draws, so nothing snaps when it ends.
-
-         The falls are shaped like gravity - slow to let go, fastest at the
-         end. An ease-out would read as the cloth being lowered on a winch. */
-      .drape { animation-duration: 1.6s; animation-timing-function: linear; }
-      .d0 { animation-name: fall0; }
-      @keyframes fall0 {
-        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        20%     { transform: translateY(-360px); }
-        34%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        72%   { transform: translateY(0); }
-        100%    { transform: translateY(0); }
-      }
-      .d1 { animation-name: fall1; }
-      @keyframes fall1 {
-        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        20%     { transform: translateY(-360px); }
-        37.5%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        75.5%   { transform: translateY(0); }
-        100%    { transform: translateY(0); }
-      }
-      .d2 { animation-name: fall2; }
-      @keyframes fall2 {
-        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        20%     { transform: translateY(-360px); }
-        41%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        79%   { transform: translateY(0); }
-        100%    { transform: translateY(0); }
-      }
-      .d3 { animation-name: fall3; }
-      @keyframes fall3 {
-        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        20%     { transform: translateY(-360px); }
-        44.5%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        82.5%   { transform: translateY(0); }
-        100%    { transform: translateY(0); }
-      }
-      .d4 { animation-name: fall4; }
-      @keyframes fall4 {
-        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        20%     { transform: translateY(-360px); }
-        48%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        86%   { transform: translateY(0); }
-        100%    { transform: translateY(0); }
-      }
-      .d5 { animation-name: fall5; }
-      @keyframes fall5 {
-        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        20%     { transform: translateY(-360px); }
-        51.5%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        89.5%   { transform: translateY(0); }
-        100%    { transform: translateY(0); }
-      }
-      .d6 { animation-name: fall6; }
-      @keyframes fall6 {
-        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        20%     { transform: translateY(-360px); }
-        55%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        93%   { transform: translateY(0); }
-        100%    { transform: translateY(0); }
-      }
-      .d7 { animation-name: fall7; }
-      @keyframes fall7 {
-        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        20%     { transform: translateY(-360px); }
-        58.5%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        96.5%   { transform: translateY(0); }
-        100%    { transform: translateY(0); }
-      }
-      .d8 { animation-name: fall8; }
-      @keyframes fall8 {
-        0%      { transform: translateY(-720px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        20%     { transform: translateY(-360px); }
-        62%   { transform: translateY(-360px); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
-        100%   { transform: translateY(0); }
-        100%    { transform: translateY(0); }
-      }
-
-      /* The playhead is pure motion - it carries no content. Unlike everything
-         else here it rests at opacity 0, because a playhead parked at the left
-         edge of a still frame reads as a stray rule, not as a composed panel. */
 
       @media (prefers-reduced-motion: reduce) {
-        .bar, .reveal, .name-in, .panel-border, .rec-dot {
+        .reveal, .name-in {
           animation: none !important;
           opacity: 1 !important;
           transform: none !important;
-          stroke-dashoffset: 0 !important;
         }
-        .playhead { animation: none !important; opacity: 0 !important; }
-        /* Killing the animation is enough to hide the curtain - its resting
-           position is already below the frame. Don't add transform:none to
-           the rule above and sweep this in with it: that is a no-op here, but
-           it would also stop this comment being true if the panels were ever
-           drawn on top of the frame instead. */
-        .drape { animation: none !important; }
+        .icons g g { animation: none !important; transform: none !important; }
       }
 </style>
   </defs>
+
+  <g class="icons" aria-hidden="true">
+    <g transform="translate(529.0 39.0) scale(1.333)" opacity="0.85">
+      <g style="transform-box:fill-box;transform-origin:center;animation:floatA 4.2s ease-in-out 0.0s infinite;">
+        <g fill="none" stroke="#61DAFB" stroke-width="1.4">
+      <ellipse cx="12" cy="12" rx="10" ry="4"/>
+      <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/>
+      <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/>
+    </g><circle cx="12" cy="12" r="2" fill="#61DAFB"/>
+      </g>
+    </g>
+    <g transform="translate(642.0 87.0) scale(1.083)" opacity="0.8">
+      <g style="transform-box:fill-box;transform-origin:center;animation:floatB 4.8s ease-in-out 0.5s infinite;">
+        <path d="M12 2l7 4v3l-7-4-7 4V6z" fill="#FF6F00"/>
+    <path d="M12 9l7 4v3l-7-4-7 4v-3z" fill="#FF6F00" opacity="0.8"/>
+    <path d="M12 16l5 3-5 3-5-3z" fill="#FF6F00" opacity="0.6"/>
+      </g>
+    </g>
+    <g transform="translate(558.0 168.0) scale(1.000)" opacity="0.85">
+      <g style="transform-box:fill-box;transform-origin:center;animation:floatC 3.7s ease-in-out 1.2s infinite;">
+        <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z" fill="#8ab4f8"/>
+    <path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z" fill="#c58af9"/>
+      </g>
+    </g>
+    <g transform="translate(690.0 35.0) scale(1.250)" opacity="0.85">
+      <g style="transform-box:fill-box;transform-origin:center;animation:floatC 3.9s ease-in-out 1.0s infinite;">
+        <rect x="5" y="8" width="3" height="3" fill="#2496ED"/>
+    <rect x="9" y="8" width="3" height="3" fill="#2496ED"/>
+    <rect x="13" y="8" width="3" height="3" fill="#2496ED"/>
+    <rect x="9" y="4" width="3" height="3" fill="#2496ED"/>
+    <path d="M2 14c1-2 3-3 5-3h10c2 0 3 1 4 3-1 3-4 5-9 5S3 17 2 14z" fill="#2496ED"/>
+      </g>
+    </g>
+    <g transform="translate(810.0 75.0) scale(1.250)" opacity="0.75">
+      <g style="transform-box:fill-box;transform-origin:center;animation:floatA 4.4s ease-in-out 0.6s infinite;">
+        <rect x="2" y="4" width="20" height="16" rx="2" fill="#161b22" stroke="#8b949e" stroke-width="1.2"/>
+    <path d="M6 9l4 3-4 3" fill="none" stroke="#3fb950" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="12" y1="15" x2="17" y2="15" stroke="#3fb950" stroke-width="1.6" stroke-linecap="round"/>
+      </g>
+    </g>
+    <g transform="translate(942.0 42.0) scale(1.083)" opacity="0.8">
+      <g style="transform-box:fill-box;transform-origin:center;animation:floatB 4.1s ease-in-out 1.4s infinite;">
+        <path d="M15 8a5 5 0 00-9.6 1.8A4 4 0 006 18h9a4.5 4.5 0 000-9 5 5 0 000-1z" fill="#4285F4"/>
+      </g>
+    </g>
+    <g transform="translate(609.0 239.0) scale(1.333)" opacity="0.9">
+      <g style="transform-box:fill-box;transform-origin:center;animation:floatA 4.6s ease-in-out 0.3s infinite;">
+        <path d="M8 3h6a3 3 0 013 3v3H9a3 3 0 00-3 3v2H4a3 3 0 01-3-3V8a5 5 0 015-5z" fill="#3776AB"/>
+    <circle cx="7" cy="6" r="1" fill="#fff"/>
+    <path d="M16 21h-6a3 3 0 01-3-3v-3h8a3 3 0 003-3V10h2a3 3 0 013 3v3a5 5 0 01-5 5z" fill="#FFD43B"/>
+    <circle cx="17" cy="18" r="1" fill="#0d1117"/>
+      </g>
+    </g>
+    <g transform="translate(752.0 192.0) scale(1.083)" opacity="0.8">
+      <g style="transform-box:fill-box;transform-origin:center;animation:floatC 5.0s ease-in-out 0.7s infinite;">
+        <circle cx="12" cy="7" r="3" fill="none" stroke="#F37626" stroke-width="1.3"/>
+    <circle cx="7" cy="16" r="3" fill="none" stroke="#F37626" stroke-width="1.3"/>
+    <circle cx="17" cy="16" r="3" fill="none" stroke="#F37626" stroke-width="1.3"/>
+    <circle cx="12" cy="13" r="1.6" fill="#F37626"/>
+      </g>
+    </g>
+    <g transform="translate(871.0 221.0) scale(1.167)" opacity="0.8">
+      <g style="transform-box:fill-box;transform-origin:center;animation:floatA 3.8s ease-in-out 1.1s infinite;">
+        <path d="M12 2l8 4.5v11L12 22l-8-4.5v-11z" fill="none" stroke="#539E43" stroke-width="1.6"/>
+    <circle cx="12" cy="12" r="2.2" fill="#539E43"/>
+      </g>
+    </g>
+    <g transform="translate(992.0 142.0) scale(1.083)" opacity="0.85">
+      <g style="transform-box:fill-box;transform-origin:center;animation:floatB 4.5s ease-in-out 0.2s infinite;">
+        <rect x="5" y="9" width="12" height="7" rx="1.5" fill="#f89820"/>
+    <path d="M17 10.5h1a2 2 0 010 4h-1" fill="none" stroke="#f89820" stroke-width="1.4"/>
+    <path d="M9 20c3 1.4 6 1.4 9 0" stroke="#f89820" stroke-width="1.2" fill="none"/>
+    <path d="M9 5c-1 1-1 2 0 3M13 5c-1 1-1 2 0 3" stroke="#f89820" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+      </g>
+    </g>
+    <g transform="translate(1072.0 242.0) scale(1.083)" opacity="0.85">
+      <g style="transform-box:fill-box;transform-origin:center;animation:floatC 4.3s ease-in-out 1.6s infinite;">
+        <circle cx="6" cy="6" r="2" fill="#F05033"/>
+    <circle cx="6" cy="18" r="2" fill="#F05033"/>
+    <circle cx="17" cy="12" r="2" fill="#F05033"/>
+    <path d="M6 8v8M6 12h9a2 2 0 002-2" stroke="#F05033" stroke-width="1.4" fill="none"/>
+      </g>
+    </g>
+  </g>
 
   <text x="64" y="92"  class="eyebrow reveal" style="animation-delay:.05s">APPLIED AI &#183; BACKEND ENGINEER</text>
   <text x="64" y="152" class="name name-in">Praveen Nukilla</text>
   <text x="64" y="188" class="role reveal"    style="animation-delay:.28s">Speech-AI systems on GCP + Gemini</text>
   <text x="64" y="222" class="caption reveal" style="animation-delay:.38s">IIIT Allahabad &#183; Final Year &#183; ECE</text>
   <text x="64" y="252" class="caption reveal" style="animation-delay:.48s" fill="#d11440">400+ DSA solved &#183; live products, real users</text>
-
-  <text x="740" y="28" class="label reveal" style="animation-delay:0s">SIGNAL</text>
-  <rect x="740" y="40" width="420" height="200" rx="8" fill="#d11440" fill-opacity="0.04"/>
-  <rect class="panel-border" pathLength="100" x="740" y="40" width="420" height="200" rx="8" fill="none" stroke="#d0d7de" stroke-width="1"/>
-  <circle cx="762" cy="66" r="4" fill="#d11440" class="rec-dot"/>
-  <text x="774" y="70" class="caption reveal" style="animation-delay:0.65s">REC</text>
-      <rect x="756.0" y="136.1" width="4" height="7.8" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.350s 1 both,scan4 2.8s ease-out 1.542s infinite;"/>
-      <rect x="764.0" y="136.8" width="4" height="6.3" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.368s 1 both,scan4 2.8s ease-out 1.598s infinite;"/>
-      <rect x="772.0" y="134.7" width="4" height="10.5" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.386s 1 both,scan4 2.8s ease-out 1.654s infinite;"/>
-      <rect x="780.0" y="137.2" width="4" height="5.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.404s 1 both,scan4 2.8s ease-out 1.710s infinite;"/>
-      <rect x="788.0" y="84.1" width="4" height="111.9" rx="1.5" fill="#d11440" opacity="0.85" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.422s 1 both,scan3 2.8s ease-out 1.766s infinite;"/>
-      <rect x="796.0" y="94.4" width="4" height="91.3" rx="1.5" fill="#d11440" opacity="0.79" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.440s 1 both,scan4 2.8s ease-out 1.822s infinite;"/>
-      <rect x="804.0" y="113.0" width="4" height="54.1" rx="1.5" fill="#d11440" opacity="0.69" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.458s 1 both,scan4 2.8s ease-out 1.878s infinite;"/>
-      <rect x="812.0" y="85.8" width="4" height="108.4" rx="1.5" fill="#d11440" opacity="0.84" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.476s 1 both,scan4 2.8s ease-out 1.934s infinite;"/>
-      <rect x="820.0" y="114.2" width="4" height="51.6" rx="1.5" fill="#d11440" opacity="0.69" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.494s 1 both,scan4 2.8s ease-out 1.990s infinite;"/>
-      <rect x="828.0" y="90.3" width="4" height="99.5" rx="1.5" fill="#d11440" opacity="0.82" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.512s 1 both,scan4 2.8s ease-out 2.046s infinite;"/>
-      <rect x="836.0" y="112.3" width="4" height="55.5" rx="1.5" fill="#d11440" opacity="0.7" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.530s 1 both,scan4 2.8s ease-out 2.102s infinite;"/>
-      <rect x="844.0" y="111.0" width="4" height="58.0" rx="1.5" fill="#d11440" opacity="0.71" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.548s 1 both,scan4 2.8s ease-out 2.158s infinite;"/>
-      <rect x="852.0" y="90.8" width="4" height="98.4" rx="1.5" fill="#d11440" opacity="0.81" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.566s 1 both,scan4 2.8s ease-out 2.214s infinite;"/>
-      <rect x="860.0" y="134.0" width="4" height="12.0" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.584s 1 both,scan4 2.8s ease-out 2.270s infinite;"/>
-      <rect x="868.0" y="137.0" width="4" height="6.1" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.602s 1 both,scan4 2.8s ease-out 2.326s infinite;"/>
-      <rect x="876.0" y="136.5" width="4" height="6.9" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.620s 1 both,scan4 2.8s ease-out 2.382s infinite;"/>
-      <rect x="884.0" y="78.5" width="4" height="122.9" rx="1.5" fill="#d11440" opacity="0.88" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.638s 1 both,scan2 2.8s ease-out 2.438s infinite;"/>
-      <rect x="892.0" y="59.2" width="4" height="161.7" rx="1.5" fill="#d11440" opacity="0.98" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.656s 1 both,scan0 2.8s ease-out 2.494s infinite;"/>
-      <rect x="900.0" y="81.6" width="4" height="116.8" rx="1.5" fill="#d11440" opacity="0.86" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.674s 1 both,scan3 2.8s ease-out 2.550s infinite;"/>
-      <rect x="908.0" y="92.5" width="4" height="95.0" rx="1.5" fill="#d11440" opacity="0.8" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.692s 1 both,scan4 2.8s ease-out 2.606s infinite;"/>
-      <rect x="916.0" y="57.4" width="4" height="165.1" rx="1.5" fill="#d11440" opacity="0.99" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.710s 1 both,scan0 2.8s ease-out 2.662s infinite;"/>
-      <rect x="924.0" y="113.7" width="4" height="52.7" rx="1.5" fill="#d11440" opacity="0.69" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.728s 1 both,scan4 2.8s ease-out 2.718s infinite;"/>
-      <rect x="932.0" y="64.6" width="4" height="150.9" rx="1.5" fill="#d11440" opacity="0.95" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.746s 1 both,scan1 2.8s ease-out 2.774s infinite;"/>
-      <rect x="940.0" y="99.0" width="4" height="82.1" rx="1.5" fill="#d11440" opacity="0.77" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.764s 1 both,scan4 2.8s ease-out 2.830s infinite;"/>
-      <rect x="948.0" y="107.8" width="4" height="64.5" rx="1.5" fill="#d11440" opacity="0.72" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.782s 1 both,scan4 2.8s ease-out 2.886s infinite;"/>
-      <rect x="956.0" y="109.4" width="4" height="61.3" rx="1.5" fill="#d11440" opacity="0.71" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.800s 1 both,scan4 2.8s ease-out 2.942s infinite;"/>
-      <rect x="964.0" y="97.8" width="4" height="84.4" rx="1.5" fill="#d11440" opacity="0.78" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.818s 1 both,scan4 2.8s ease-out 2.998s infinite;"/>
-      <rect x="972.0" y="67.1" width="4" height="145.8" rx="1.5" fill="#d11440" opacity="0.94" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.836s 1 both,scan1 2.8s ease-out 3.054s infinite;"/>
-      <rect x="980.0" y="136.7" width="4" height="6.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.854s 1 both,scan4 2.8s ease-out 3.110s infinite;"/>
-      <rect x="988.0" y="135.0" width="4" height="9.9" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.872s 1 both,scan4 2.8s ease-out 3.166s infinite;"/>
-      <rect x="996.0" y="134.8" width="4" height="10.4" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.890s 1 both,scan4 2.8s ease-out 3.222s infinite;"/>
-      <rect x="1004.0" y="94.0" width="4" height="92.1" rx="1.5" fill="#d11440" opacity="0.8" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.908s 1 both,scan4 2.8s ease-out 3.278s infinite;"/>
-      <rect x="1012.0" y="83.4" width="4" height="113.3" rx="1.5" fill="#d11440" opacity="0.85" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.926s 1 both,scan3 2.8s ease-out 3.334s infinite;"/>
-      <rect x="1020.0" y="112.7" width="4" height="54.6" rx="1.5" fill="#d11440" opacity="0.7" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.944s 1 both,scan4 2.8s ease-out 3.390s infinite;"/>
-      <rect x="1028.0" y="112.9" width="4" height="54.2" rx="1.5" fill="#d11440" opacity="0.7" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.962s 1 both,scan4 2.8s ease-out 3.446s infinite;"/>
-      <rect x="1036.0" y="104.0" width="4" height="72.0" rx="1.5" fill="#d11440" opacity="0.74" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.980s 1 both,scan4 2.8s ease-out 3.502s infinite;"/>
-      <rect x="1044.0" y="75.3" width="4" height="129.3" rx="1.5" fill="#d11440" opacity="0.9" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 0.998s 1 both,scan2 2.8s ease-out 3.558s infinite;"/>
-      <rect x="1052.0" y="90.6" width="4" height="98.8" rx="1.5" fill="#d11440" opacity="0.81" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.016s 1 both,scan4 2.8s ease-out 3.614s infinite;"/>
-      <rect x="1060.0" y="97.5" width="4" height="85.0" rx="1.5" fill="#d11440" opacity="0.78" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.034s 1 both,scan4 2.8s ease-out 3.670s infinite;"/>
-      <rect x="1068.0" y="81.1" width="4" height="117.9" rx="1.5" fill="#d11440" opacity="0.87" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.052s 1 both,scan3 2.8s ease-out 3.726s infinite;"/>
-      <rect x="1076.0" y="135.6" width="4" height="8.8" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.070s 1 both,scan4 2.8s ease-out 3.782s infinite;"/>
-      <rect x="1084.0" y="136.2" width="4" height="7.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.088s 1 both,scan4 2.8s ease-out 3.838s infinite;"/>
-      <rect x="1092.0" y="134.1" width="4" height="11.7" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.106s 1 both,scan4 2.8s ease-out 3.894s infinite;"/>
-      <rect x="1100.0" y="134.5" width="4" height="10.9" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.124s 1 both,scan4 2.8s ease-out 3.950s infinite;"/>
-      <rect x="1108.0" y="101.7" width="4" height="76.6" rx="1.5" fill="#d11440" opacity="0.76" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.142s 1 both,scan4 2.8s ease-out 4.006s infinite;"/>
-      <rect x="1116.0" y="81.7" width="4" height="116.5" rx="1.5" fill="#d11440" opacity="0.86" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.160s 1 both,scan3 2.8s ease-out 4.062s infinite;"/>
-      <rect x="1124.0" y="84.7" width="4" height="110.6" rx="1.5" fill="#d11440" opacity="0.85" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.178s 1 both,scan3 2.8s ease-out 4.118s infinite;"/>
-      <rect x="1132.0" y="63.6" width="4" height="152.9" rx="1.5" fill="#d11440" opacity="0.96" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.196s 1 both,scan1 2.8s ease-out 4.174s infinite;"/>
-      <rect x="1140.0" y="72.4" width="4" height="135.3" rx="1.5" fill="#d11440" opacity="0.91" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.214s 1 both,scan2 2.8s ease-out 4.230s infinite;"/>
-      <rect x="1148.0" y="99.1" width="4" height="81.9" rx="1.5" fill="#d11440" opacity="0.77" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.232s 1 both,scan4 2.8s ease-out 4.286s infinite;"/>
-      <rect x="1156.0" y="133.4" width="4" height="13.3" rx="1.5" fill="#d11440" opacity="0.59" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.250s 1 both,scan4 2.8s ease-out 4.300s infinite;"/>
-      <rect x="1164.0" y="137.0" width="4" height="6.0" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.268s 1 both,scan4 2.8s ease-out 4.300s infinite;"/>
-      <rect x="1172.0" y="135.7" width="4" height="8.6" rx="1.5" fill="#d11440" opacity="0.57" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.286s 1 both,scan4 2.8s ease-out 4.300s infinite;"/>
-      <rect x="1180.0" y="134.3" width="4" height="11.4" rx="1.5" fill="#d11440" opacity="0.58" class="bar" style="transform-box:fill-box;transform-origin:center;animation:riseIn .42s cubic-bezier(.22,1.61,.36,1) 1.304s 1 both,scan4 2.8s ease-out 4.300s infinite;"/>
-  <g class="playhead">
-    <rect x="750" y="52" width="2" height="176" fill="url(#scanfade)"/>
-  </g>
-  <text x="756" y="224" class="caption reveal" style="animation-delay:.9s">44.1kHz &#183; Silero VAD</text>
-
-  <g class="curtain" aria-hidden="true">
-    <g class="drape d0">
-      <rect x="-0.5" y="320" width="134.3" height="360" fill="#d11440"/>
-      <rect x="-0.5" y="320" width="134.3" height="360" fill="url(#pleat)"/>
-      <!-- The top edge is what leads the fall, so it carries the detail: a lit
-           fold, and the shadow the fold throws down the cloth beneath it. -->
-      <rect x="-0.5" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
-      <rect x="-0.5" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
-    </g>
-    <g class="drape d1">
-      <rect x="132.8" y="320" width="134.3" height="360" fill="#d11440"/>
-      <rect x="132.8" y="320" width="134.3" height="360" fill="url(#pleat)"/>
-      <!-- The top edge is what leads the fall, so it carries the detail: a lit
-           fold, and the shadow the fold throws down the cloth beneath it. -->
-      <rect x="132.8" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
-      <rect x="132.8" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
-    </g>
-    <g class="drape d2">
-      <rect x="266.2" y="320" width="134.3" height="360" fill="#d11440"/>
-      <rect x="266.2" y="320" width="134.3" height="360" fill="url(#pleat)"/>
-      <!-- The top edge is what leads the fall, so it carries the detail: a lit
-           fold, and the shadow the fold throws down the cloth beneath it. -->
-      <rect x="266.2" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
-      <rect x="266.2" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
-    </g>
-    <g class="drape d3">
-      <rect x="399.5" y="320" width="134.3" height="360" fill="#d11440"/>
-      <rect x="399.5" y="320" width="134.3" height="360" fill="url(#pleat)"/>
-      <!-- The top edge is what leads the fall, so it carries the detail: a lit
-           fold, and the shadow the fold throws down the cloth beneath it. -->
-      <rect x="399.5" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
-      <rect x="399.5" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
-    </g>
-    <g class="drape d4">
-      <rect x="532.8" y="320" width="134.3" height="360" fill="#d11440"/>
-      <rect x="532.8" y="320" width="134.3" height="360" fill="url(#pleat)"/>
-      <!-- The top edge is what leads the fall, so it carries the detail: a lit
-           fold, and the shadow the fold throws down the cloth beneath it. -->
-      <rect x="532.8" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
-      <rect x="532.8" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
-    </g>
-    <g class="drape d5">
-      <rect x="666.2" y="320" width="134.3" height="360" fill="#d11440"/>
-      <rect x="666.2" y="320" width="134.3" height="360" fill="url(#pleat)"/>
-      <!-- The top edge is what leads the fall, so it carries the detail: a lit
-           fold, and the shadow the fold throws down the cloth beneath it. -->
-      <rect x="666.2" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
-      <rect x="666.2" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
-    </g>
-    <g class="drape d6">
-      <rect x="799.5" y="320" width="134.3" height="360" fill="#d11440"/>
-      <rect x="799.5" y="320" width="134.3" height="360" fill="url(#pleat)"/>
-      <!-- The top edge is what leads the fall, so it carries the detail: a lit
-           fold, and the shadow the fold throws down the cloth beneath it. -->
-      <rect x="799.5" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
-      <rect x="799.5" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
-    </g>
-    <g class="drape d7">
-      <rect x="932.8" y="320" width="134.3" height="360" fill="#d11440"/>
-      <rect x="932.8" y="320" width="134.3" height="360" fill="url(#pleat)"/>
-      <!-- The top edge is what leads the fall, so it carries the detail: a lit
-           fold, and the shadow the fold throws down the cloth beneath it. -->
-      <rect x="932.8" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
-      <rect x="932.8" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
-    </g>
-    <g class="drape d8">
-      <rect x="1066.2" y="320" width="134.3" height="360" fill="#d11440"/>
-      <rect x="1066.2" y="320" width="134.3" height="360" fill="url(#pleat)"/>
-      <!-- The top edge is what leads the fall, so it carries the detail: a lit
-           fold, and the shadow the fold throws down the cloth beneath it. -->
-      <rect x="1066.2" y="320" width="134.3" height="6" fill="#ffffff" opacity="0.22"/>
-      <rect x="1066.2" y="326" width="134.3" height="12" fill="#000000" opacity="0.16"/>
-    </g>
-  </g>
 </svg>
