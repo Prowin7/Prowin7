@@ -2,68 +2,79 @@
 """
 Regenerate assets/banner-dark.svg and assets/banner-light.svg.
 
-The banner keeps the original 1200x280 "signal" composition and adds a 100px
-stage strip underneath (total 1200x380) where a small articulated desk lamp
-hops in, lands with a squash, tilts its head up at the name and switches on a
-light cone that washes over the text.
+The banner keeps the original 1200x280 "signal" composition and extends the
+frame to 1200x400 so a boom microphone can reach in from off-frame on the
+right, settle over the empty corridor below the text, and hang there
+listening. Capture rings pulse off the capsule and the waveform in the SIGNAL
+panel sways on the same period as the boom, so the mic and the signal read as
+one system rather than two decorations.
 
-The waveform bars in the SIGNAL panel are lifted verbatim out of the existing
-banner-dark.svg so the panel keeps its exact shape across regenerations.
+The waveform bars are lifted verbatim out of the existing banner-dark.svg so
+the panel keeps its exact shape across regenerations.
 
 Motion follows the classic animation principles rather than UI easing:
-  - anticipation + arc on the hop
-  - squash on contact, stretch in the air
-  - a contact shadow that scales inversely with height (reads as weight)
-  - overshoot-and-settle on the landing and on the head turn
-  - follow-through: the head keeps a slow idle bob after the pose lands
+  - the boom slides in and overshoots instead of arriving flat
+  - the mic drags behind the arm, then overshoots past plumb and settles
+    (follow-through and overlapping action - the hanging part never stops at
+    the same instant the thing carrying it does)
+  - the idle sway on the mic runs slower than the boom's and lags it, so the
+    two never look mechanically locked
 
 Everything is expressed as CSS keyframes inside the SVG. GitHub serves these
-files through <img>, which runs CSS animations but no script, so no SMIL and
-no JS is used. Every animated element resolves to its *final* pose when
-transforms are removed, so the prefers-reduced-motion block can simply switch
-animations off and still show a composed frame.
+files through an img element, which runs CSS animations but no script, so no
+SMIL and no JS is used.
+
+Every animated element rests at its FINAL state and animates in from a
+keyframed start with fill-mode backwards. A renderer that declines to run the
+animations then shows the composed banner rather than an empty frame - the
+previous version made the text, the bars and the panel border visible only as
+a side effect of an animation running, and lost all of them on a cached
+decode.
 """
 
-import re
+import math
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 
 W, H = 1200, 420
-FLOOR_Y = 396          # ground line the lamp stands on
-LAMP_SCALE = 1.4       # the lamp is drawn at unit scale and sized here
-LAMP_X = 604           # where the lamp comes to rest (clear of the text column)
-HOP_FROM = -740        # offscreen-left start, expressed as an offset from LAMP_X
+
+# The boom pivots off-frame to the right and reaches left into the corridor
+# under the text block. Both endpoints are absolute; the arm is drawn in the
+# pivot's local space.
+PIVOT_X, PIVOT_Y = 1304, 240
+ARM_DX, ARM_DY = -620, 48      # arm end, relative to the pivot
+MIC_SCALE = 1.3                # the mic is the subject; the arm is just how it got here
+BOOM_IN = 700                  # how far off-frame the rig starts
+
+ARM_ANGLE = math.degrees(math.atan2(ARM_DY, ARM_DX))   # arm slope, for parts riding on it
+COLLAR_F = 0.28                                        # collar position along the arm
+COLLAR_X, COLLAR_Y = ARM_DX * COLLAR_F, ARM_DY * COLLAR_F
 
 SIGNAL = "#d11440"
-WARM = "#ffcf8a"
-WARM_LIGHT = "#e8a94e"   # the pale warm reads as nothing on a white plate
 
 THEMES = {
     "dark": dict(
         name="#e6edf3", muted="#8b949e", stroke="#30363d",
-        plate_top="#0d1117", plate_bot="#161b22", plate_op="0.85",
-        floor="#30363d", lamp="#c9d1d9", lamp_dark="#8b949e",
-        cone_op="0.30", glow_op="0.55", shadow="#010409", shadow_op="0.55", warm=WARM,
+        metal="#c9d1d9", metal_dark="#8b949e", grille="#484f58",
+        ring_op="0.55",
     ),
     "light": dict(
         name="#0d1117", muted="#57606a", stroke="#d0d7de",
-        plate_top="#ffffff", plate_bot="#f6f8fa", plate_op="0.9",
-        floor="#d0d7de", lamp="#57606a", lamp_dark="#8c959f",
-        cone_op="0.32", glow_op="0.45", shadow="#57606a", shadow_op="0.28", warm=WARM_LIGHT,
+        metal="#57606a", metal_dark="#8c959f", grille="#afb8c1",
+        ring_op="0.40",
     ),
 }
 
 
-
 def existing_bars() -> str:
-    """Pull the waveform <rect class="bar"> lines out of the current dark banner."""
+    """Pull the waveform rects out of the current dark banner, unchanged."""
     src = (ASSETS / "banner-dark.svg").read_text()
     bars = [ln.strip() for ln in src.splitlines() if 'class="bar"' in ln]
     if not bars:
         raise SystemExit("no waveform bars found in assets/banner-dark.svg")
-    return "\n    ".join(bars)
+    return "\n      ".join(bars)
 
 
 def css(t: dict) -> str:
@@ -75,27 +86,20 @@ def css(t: dict) -> str:
       .label   {{ font: 600 11px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; letter-spacing: .2em; fill: {t['muted']}; }}
 
       /* Every animated element below rests at its FINAL state and animates in
-         from a keyframed start with fill-mode backwards. Renderers that decline
-         to run animations in an img element (a cached decode, a converter, a reader
-         view) then show the composed banner instead of an empty frame. */
+         from a keyframed start with fill-mode backwards, so a renderer that
+         skips animations still shows the composed banner. */
+
       .reveal {{ animation: revealText .6s cubic-bezier(.16,1,.3,1) backwards; }}
       @keyframes revealText {{ from {{ opacity: 0; transform: translateY(10px); }} to {{ opacity: 1; transform: translateY(0); }} }}
 
-      /* the name lands with a small overshoot instead of a flat fade */
       .name-in {{
         transform-box: fill-box; transform-origin: left bottom;
-        animation: nameIn .72s cubic-bezier(.22,1.42,.36,1) .16s backwards,
-                   nameLit 2.6s ease-in-out 3.25s infinite;
+        animation: nameIn .72s cubic-bezier(.22,1.42,.36,1) .16s backwards;
       }}
       @keyframes nameIn {{
         0%   {{ opacity: 0; transform: translateY(14px) scale(.94, 1.06); }}
         60%  {{ opacity: 1; transform: translateY(0)    scale(1.02, .98); }}
         100% {{ opacity: 1; transform: translateY(0)    scale(1, 1); }}
-      }}
-      /* warm bounce light off the lamp, only once the lamp is lit */
-      @keyframes nameLit {{
-        0%, 100% {{ filter: none; }}
-        45%      {{ filter: drop-shadow(0 0 14px rgba(255,207,138,.38)); }}
       }}
 
       @keyframes riseIn {{
@@ -119,206 +123,143 @@ def css(t: dict) -> str:
       @keyframes recPop {{ from {{ transform: scale(0); opacity: 0; }} to {{ transform: scale(1); opacity: 1; }} }}
       @keyframes pulse {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: .35; }} }}
 
-      /* ---------- the lamp ---------- */
+      /* ---------- the boom ---------- */
 
-      /* horizontal travel: four hops, ground-to-ground, easing out of each push */
-      .hop-x {{ animation: hopX 1.72s linear .70s backwards; }}
-      @keyframes hopX {{
-        0%   {{ transform: translateX({HOP_FROM}px); }}
-        25%  {{ transform: translateX({HOP_FROM * 0.62:.0f}px); }}
-        50%  {{ transform: translateX({HOP_FROM * 0.34:.0f}px); }}
-        75%  {{ transform: translateX({HOP_FROM * 0.13:.0f}px); }}
-        100% {{ transform: translateX(0); }}
-      }}
+      /* the rig pushes in from off-frame and overshoots before settling */
+      .boom-in {{ animation: boomIn 1.15s cubic-bezier(.18,1.24,.34,1) .55s backwards; }}
+      @keyframes boomIn {{ from {{ transform: translateX({BOOM_IN}px); }} to {{ transform: translateX(0); }} }}
 
-      /* vertical arc, kept as its own layer so height and distance stay independent */
-      .hop-y {{ animation: hopY 1.72s .70s backwards; }}
-      @keyframes hopY {{
-        0%,  25%, 50%, 75%, 100% {{ transform: translateY(0);     animation-timing-function: cubic-bezier(.2,.7,.4,1); }}
-        12.5%                    {{ transform: translateY(-26px); animation-timing-function: cubic-bezier(.6,0,.8,.35); }}
-        37.5%                    {{ transform: translateY(-23px); animation-timing-function: cubic-bezier(.6,0,.8,.35); }}
-        62.5%                    {{ transform: translateY(-19px); animation-timing-function: cubic-bezier(.6,0,.8,.35); }}
-        87.5%                    {{ transform: translateY(-14px); animation-timing-function: cubic-bezier(.6,0,.8,.35); }}
-      }}
-
-      /* squash on every contact, stretch at the top of every arc, then settle */
-      .squash {{ animation: squash 2.16s .70s backwards; }}
-      @keyframes squash {{
-        0%    {{ transform: scale(1.16, .84); }}
-        6%    {{ transform: scale(.93, 1.07); }}
-        16%   {{ transform: scale(1, 1); }}
-        20%   {{ transform: scale(1.14, .86); }}
-        26%   {{ transform: scale(.94, 1.06); }}
-        36%   {{ transform: scale(1, 1); }}
-        40%   {{ transform: scale(1.12, .88); }}
-        46%   {{ transform: scale(.95, 1.05); }}
-        56%   {{ transform: scale(1, 1); }}
-        60%   {{ transform: scale(1.10, .90); }}
-        66%   {{ transform: scale(.96, 1.04); }}
-        76%   {{ transform: scale(1, 1); }}
-        80%   {{ transform: scale(1.18, .82); }}   /* the landing, the biggest hit */
-        87%   {{ transform: scale(.96, 1.05); }}
-        94%   {{ transform: scale(1.02, .98); }}
-        100%  {{ transform: scale(1, 1); }}
-      }}
-
-      /* the arms wind up on take-off and unfold as the lamp settles */
-      .lower {{ animation: lowerArm 2.16s cubic-bezier(.22,1.2,.36,1) .70s backwards; }}
-      @keyframes lowerArm {{
-        0%   {{ transform: rotate(24deg); }}
-        50%  {{ transform: rotate(14deg); }}
-        80%  {{ transform: rotate(-7deg); }}
-        90%  {{ transform: rotate(3deg); }}
-        100% {{ transform: rotate(0deg); }}
-      }}
-      .upper {{ animation: upperArm 2.16s cubic-bezier(.22,1.2,.36,1) .70s backwards; }}
-      @keyframes upperArm {{
-        0%   {{ transform: rotate(-34deg); }}
-        50%  {{ transform: rotate(-20deg); }}
-        80%  {{ transform: rotate(11deg); }}
-        90%  {{ transform: rotate(-5deg); }}
-        100% {{ transform: rotate(0deg); }}
-      }}
-
-      /* the head turn is the story beat: it arrives late and overshoots */
-      .head {{ animation: headTurn .62s cubic-bezier(.34,1.5,.5,1) 2.46s backwards; }}
-      @keyframes headTurn {{
-        0%   {{ transform: rotate(52deg); }}
-        100% {{ transform: rotate(0deg); }}
-      }}
-      /* follow-through: a slow idle bob, on its own layer so it can't fight the turn */
-      .head-bob {{ animation: headBob 4.2s ease-in-out 3.2s infinite; }}
-      @keyframes headBob {{
+      /* the arm keeps swaying: the slower of the two idle periods */
+      .boom-idle {{ animation: boomIdle 7.5s ease-in-out 2.1s infinite; }}
+      @keyframes boomIdle {{
         0%, 100% {{ transform: rotate(0deg); }}
-        50%      {{ transform: rotate(-3.2deg); }}
+        50%      {{ transform: rotate(-1.1deg); }}
       }}
 
-      /* contact shadow: wide and dark on the ground, small and faint in the air */
-      .shadow {{ animation: shadowHop 2.16s .70s backwards; }}
-      @keyframes shadowHop {{
-        0%,  20%, 40%, 60%, 80%, 100% {{ opacity: {t['shadow_op']}; transform: scale(1, 1); }}
-        6%,  26%, 46%, 66%            {{ opacity: {float(t['shadow_op']) * 0.4:.2f}; transform: scale(.62, .62); }}
-        86%                           {{ opacity: {t['shadow_op']}; transform: scale(1.12, 1); }}
+      /* follow-through: the mic lags the arm, swings past plumb, then settles */
+      .mic-drag {{ animation: micDrag 2.05s cubic-bezier(.26,1.1,.4,1) .55s backwards; }}
+      @keyframes micDrag {{
+        0%   {{ transform: rotate(38deg); }}
+        38%  {{ transform: rotate(-14deg); }}
+        60%  {{ transform: rotate(7deg); }}
+        78%  {{ transform: rotate(-3.4deg); }}
+        90%  {{ transform: rotate(1.4deg); }}
+        100% {{ transform: rotate(0deg); }}
+      }}
+      /* a longer idle period than the arm's, and offset, so they never lock */
+      .mic-idle {{ animation: micIdle 6.1s ease-in-out 2.6s infinite; }}
+      @keyframes micIdle {{
+        0%, 100% {{ transform: rotate(1.6deg); }}
+        50%      {{ transform: rotate(-2.4deg); }}
       }}
 
-      /* the bulb clicks on after the head has finished turning */
-      .glow {{ animation: bulbOn .5s ease-out 2.86s backwards, bulbBreathe 3.4s ease-in-out 3.4s infinite; }}
-      @keyframes bulbOn {{ from {{ opacity: 0; }} to {{ opacity: 1; }} }}
-      @keyframes bulbBreathe {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: .78; }} }}
+      /* capture rings leaving the capsule */
+      .ring {{ animation: ringOut 2.6s ease-out infinite backwards; }}
+      @keyframes ringOut {{
+        0%   {{ opacity: 0;   transform: scale(.35); }}
+        18%  {{ opacity: {t['ring_op']}; }}
+        100% {{ opacity: 0;   transform: scale(1.9); }}
+      }}
 
-      .cone {{ animation: coneOn .55s ease-out 2.90s backwards, coneFlicker 5.5s ease-in-out 3.5s infinite; }}
-      @keyframes coneOn {{ from {{ opacity: 0; }} to {{ opacity: 1; }} }}
-      @keyframes coneFlicker {{ 0%, 100% {{ opacity: 1; }} 42% {{ opacity: .82; }} 47% {{ opacity: .95; }} }}
+      .live {{
+        transform-box: fill-box; transform-origin: center;
+        animation: livePop .34s cubic-bezier(.34,1.56,.64,1) 2.2s backwards,
+                   pulse 1.7s ease-in-out 2.5s infinite;
+      }}
+      @keyframes livePop {{ from {{ transform: scale(0); opacity: 0; }} to {{ transform: scale(1); opacity: 1; }} }}
+
+      /* The panel answers the mic: same period as the boom's sway, same phase.
+         Translation only - a scale here would be taken about the SVG origin,
+         not the panel, and would push the bars straight out through the
+         panel border. */
+      .bars-sway {{ animation: barsSway 7.5s ease-in-out 2.1s infinite; }}
+      @keyframes barsSway {{
+        0%, 100% {{ transform: translateX(0); }}
+        50%      {{ transform: translateX(-3px); }}
+      }}
 
       @media (prefers-reduced-motion: reduce) {{
         .bar, .reveal, .name-in, .panel-border, .rec-dot,
-        .hop-x, .hop-y, .squash, .lower, .upper, .head, .head-bob,
-        .shadow, .glow, .cone {{
+        .boom-in, .boom-idle, .mic-drag, .mic-idle, .ring, .live, .bars-sway {{
           animation: none !important;
           opacity: 1 !important;
           transform: none !important;
-          filter: none !important;
           stroke-dashoffset: 0 !important;
         }}
-        .shadow {{ opacity: {t['shadow_op']} !important; }}
+        .ring {{ opacity: {t['ring_op']} !important; }}
       }}
 """
 
 
-def lamp(t: dict) -> str:
+def boom(t: dict) -> str:
     """
-    Articulated desk lamp, drawn in local coordinates with the base pivot at 0,0.
+    Boom arm and microphone.
 
-    Joints are nested translate/rotate group pairs rather than CSS
-    transform-origin, so the rotation centres do not depend on transform-box
-    support. Each rotating group turns about its own local origin.
+    Rotation centres are set by nested translate/rotate group pairs rather than
+    CSS transform-origin, so they do not depend on transform-box support: each
+    rotating group turns about its own local origin, and the wrapper before it
+    puts that origin where the joint is.
     """
     return f"""
-  <!-- stage -->
-  <rect x="0" y="280" width="{W}" height="{H - 280}" fill="url(#plate)" opacity="{t['plate_op']}"/>
-  <rect x="0" y="{FLOOR_Y}" width="{W}" height="1" fill="{t['floor']}" opacity="0.9"/>
+  <g class="boom-in">
+    <g transform="translate({PIVOT_X},{PIVOT_Y})">
+      <g class="boom-idle">
+        <!-- arm, drawn from the off-frame pivot to the mount -->
+        <line x1="0" y1="0" x2="{ARM_DX}" y2="{ARM_DY}" stroke="{t['metal']}" stroke-width="8" stroke-linecap="round"/>
+        <line x1="-14" y1="1" x2="{ARM_DX + 18}" y2="{ARM_DY - 1}" stroke="{t['metal_dark']}" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
+        <!-- collar, where a real boom's sections telescope; sits ON the arm,
+             so its centre and rotation are derived from the arm vector -->
+        <rect x="{COLLAR_X - 13}" y="{COLLAR_Y - 7}" width="26" height="14" rx="4" fill="{t['metal_dark']}" transform="rotate({ARM_ANGLE:.2f} {COLLAR_X} {COLLAR_Y})"/>
 
-  <!-- contact shadow: shares the hop's horizontal travel but never leaves the ground -->
-  <g transform="translate({LAMP_X},{FLOOR_Y})">
-    <g class="hop-x">
-      <g class="shadow">
-        <ellipse cx="{6 * LAMP_SCALE:.0f}" cy="1" rx="{34 * LAMP_SCALE:.0f}" ry="{6 * LAMP_SCALE:.0f}" fill="url(#contact)" opacity="{t['shadow_op']}"/>
-      </g>
-    </g>
-  </g>
+        <g transform="translate({ARM_DX},{ARM_DY})">
+          <!-- mount, and the mic hanging off it -->
+          <circle cx="0" cy="0" r="6" fill="{t['metal_dark']}"/>
+          <!-- clamp stays with the arm, so the joint reads as connected even at
+               the extremes of the mic's swing -->
+          <rect x="-5" y="-2" width="10" height="13" rx="3" fill="{t['metal_dark']}"/>
+          <g class="mic-drag">
+            <g class="mic-idle">
+             <g transform="scale({MIC_SCALE})">
+              <!-- yoke -->
+              <path d="M -10 4 L -10 18 M 10 4 L 10 18" stroke="{t['metal_dark']}" stroke-width="3" stroke-linecap="round"/>
+              <rect x="-12" y="16" width="24" height="9" rx="4" fill="{t['metal_dark']}"/>
 
-  <!-- lamp -->
-  <g transform="translate({LAMP_X},{FLOOR_Y})">
-    <g class="hop-x">
-      <g class="hop-y">
-       <g transform="scale({LAMP_SCALE})">
-        <g class="squash">
-          <!-- base -->
-          <path d="M -20 0 L 20 0 L 15 -7 L -15 -7 Z" fill="{t['lamp']}"/>
-          <ellipse cx="0" cy="0" rx="21" ry="4" fill="{t['lamp_dark']}"/>
-          <!-- lower arm, pivots on the base -->
-          <g transform="rotate(-14)">
-           <g class="lower">
-            <rect x="-2" y="-34" width="4" height="34" rx="2" fill="{t['lamp']}"/>
-            <circle cx="0" cy="-34" r="3.4" fill="{t['lamp_dark']}"/>
-            <!-- upper arm, pivots on the elbow -->
-            <g transform="translate(0,-34)">
-              <g transform="rotate(30)">
-               <g class="upper">
-                <rect x="-2" y="-30" width="4" height="30" rx="2" fill="{t['lamp']}"/>
-                <circle cx="0" cy="-30" r="3.4" fill="{t['lamp_dark']}"/>
-                <!-- head, pivots on the neck -->
-                <g transform="translate(0,-30)">
-                  <g class="head">
-                    <g class="head-bob">
-                      <!-- shade points up and to the left, at the name -->
-                      <g transform="rotate(30)">
-                        <!-- light cone, drawn behind the shade -->
-                        <g class="cone">
-                          <path d="M -7 -6 L -215 -84 L -215 76 L -7 6 Z" fill="url(#cone)"/>
-                        </g>
-                        <path d="M 2 -11 L 2 11 L -15 17 L -15 -17 Z" fill="{SIGNAL}"/>
-                        <path d="M 2 -11 L 2 11 L 7 8 L 7 -8 Z" fill="{t['lamp_dark']}"/>
-                        <g class="glow">
-                          <ellipse cx="-15" cy="0" rx="7" ry="15" fill="url(#bulb)"/>
-                          <ellipse cx="-30" cy="0" rx="26" ry="30" fill="url(#bulb)" opacity="0.45"/>
-                        </g>
-                      </g>
-                    </g>
+              <!-- body, hanging nose-down and angled at the text block -->
+              <g transform="translate(0,24) rotate(-19)">
+                <rect x="-12" y="0" width="24" height="36" rx="6" fill="{t['metal']}"/>
+                <rect x="-12" y="32" width="24" height="42" rx="12" fill="{t['grille']}"/>
+                <!-- grille lines -->
+                <path d="M -9 42 H 9 M -10 50 H 10 M -10 58 H 10 M -9 66 H 9"
+                      stroke="{t['metal_dark']}" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
+                <rect x="-12" y="27" width="24" height="4" rx="2" fill="{SIGNAL}"/>
+                <circle class="live" cx="0" cy="13" r="3.2" fill="{SIGNAL}"/>
+
+                <!-- capture rings, leaving the capsule -->
+                <g transform="translate(0,53)">
+                  <g class="ring" style="animation-delay:2.4s">
+                    <circle r="17" fill="none" stroke="{SIGNAL}" stroke-width="1.6"/>
+                  </g>
+                  <g class="ring" style="animation-delay:3.27s">
+                    <circle r="17" fill="none" stroke="{SIGNAL}" stroke-width="1.6"/>
+                  </g>
+                  <g class="ring" style="animation-delay:4.13s">
+                    <circle r="17" fill="none" stroke="{SIGNAL}" stroke-width="1.6"/>
                   </g>
                 </g>
-               </g>
               </g>
+             </g>
             </g>
-           </g>
           </g>
         </g>
-       </g>
       </g>
     </g>
   </g>
 """
 
 
-def build(theme_name: str, t: dict, bars: str) -> str:
+def build(t: dict, bars: str) -> str:
     return f"""<svg width="{W}" height="{H}" viewBox="0 0 {W} {H}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Praveen Nukilla &#8212; Applied AI &amp; Backend Engineer">
   <defs>
-    <linearGradient id="plate" x1="0" y1="280" x2="0" y2="{H}" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="{t['plate_top']}" stop-opacity="0"/>
-      <stop offset="1" stop-color="{t['plate_bot']}"/>
-    </linearGradient>
-    <radialGradient id="contact">
-      <stop offset="0" stop-color="{t['shadow']}" stop-opacity="0.9"/>
-      <stop offset="1" stop-color="{t['shadow']}" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="bulb">
-      <stop offset="0" stop-color="{t['warm']}" stop-opacity="{t['glow_op']}"/>
-      <stop offset="1" stop-color="{t['warm']}" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="cone" x1="0" y1="0" x2="-215" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="{t['warm']}" stop-opacity="{t['cone_op']}"/>
-      <stop offset="1" stop-color="{t['warm']}" stop-opacity="0"/>
-    </linearGradient>
     <style>{css(t)}</style>
   </defs>
 
@@ -333,9 +274,11 @@ def build(theme_name: str, t: dict, bars: str) -> str:
   <rect class="panel-border" pathLength="100" x="740" y="40" width="420" height="200" rx="8" fill="none" stroke="{t['stroke']}" stroke-width="1"/>
   <circle cx="762" cy="66" r="4" fill="{SIGNAL}" class="rec-dot"/>
   <text x="774" y="70" class="caption reveal" style="animation-delay:0.65s">REC</text>
-    {bars}
+  <g class="bars-sway">
+      {bars}
+  </g>
   <text x="756" y="224" class="caption reveal" style="animation-delay:.9s">44.1kHz &#183; Silero VAD</text>
-{lamp(t)}</svg>
+{boom(t)}</svg>
 """
 
 
@@ -343,7 +286,7 @@ def main() -> None:
     bars = existing_bars()
     for theme_name, t in THEMES.items():
         out = ASSETS / f"banner-{theme_name}.svg"
-        out.write_text(build(theme_name, t, bars))
+        out.write_text(build(t, bars))
         print(f"wrote {out.relative_to(ROOT)}  ({out.stat().st_size} bytes)")
 
 
