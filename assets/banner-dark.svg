@@ -88,43 +88,72 @@
       @keyframes recPop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
       @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
 
-      /* ---------- the mic ---------- */
+      /* ---------- the bot ---------- */
 
-      /* the rig drops in and overshoots */
-      .drop { animation: drop 1.05s cubic-bezier(.2,1.3,.36,1) .5s backwards; }
-      @keyframes drop { from { transform: translateY(-210px); } to { transform: translateY(0); } }
-
-      /* follow-through: the capsule lags the mount, swings past plumb, settles */
-      .swing { animation: swing 2.1s cubic-bezier(.26,1.1,.4,1) .5s backwards; }
-      @keyframes swing {
-        0%   { transform: rotate(-15deg); }
-        30%  { transform: rotate(11deg); }
-        52%  { transform: rotate(-6deg); }
-        72%  { transform: rotate(3deg); }
-        88%  { transform: rotate(-1.3deg); }
-        100% { transform: rotate(0deg); }
-      }
-      /* two idle periods that do not divide into each other */
-      .sway-mount { animation: swayMount 7.5s ease-in-out 2.2s infinite; }
-      @keyframes swayMount {
-        0%, 100% { transform: rotate(.8deg); }
-        50%      { transform: rotate(-.8deg); }
-      }
-      .sway-caps { animation: swayCaps 6.1s ease-in-out 2.6s infinite; }
-      @keyframes swayCaps {
-        0%, 100% { transform: rotate(-1.5deg); }
-        50%      { transform: rotate(2.2deg); }
+      /* arrives with a settle rather than a fade */
+      .bot-in { animation: botIn .9s cubic-bezier(.2,1.32,.36,1) .45s backwards; }
+      @keyframes botIn {
+        from { opacity: 0; transform: translateY(-38px) scale(.86); }
+        to   { opacity: 1; transform: translateY(0)     scale(1); }
       }
 
-      /* Capture rings and the playhead are pure motion - they carry no content.
-         Unlike everything else here they rest at opacity 0, because a ring
-         frozen mid-expansion reads as a rendering bug, not as a still frame. */
-      .ring { opacity: 0; animation: ringOut 2.6s ease-out infinite backwards; }
-      @keyframes ringOut {
-        0%   { opacity: 0;   transform: scale(.35); }
-        18%  { opacity: 0.5; }
-        100% { opacity: 0;   transform: scale(2); }
+      /* hovering, on a period that shares no factor with the sweep */
+      .bob { animation: bob 4.3s ease-in-out 1.3s infinite; }
+      @keyframes bob {
+        0%, 100% { transform: translateY(-3px); }
+        50%      { transform: translateY(3px); }
       }
+
+      /* the head leads the eye: it turns to the name, then tracks the panel */
+      .head-turn {
+        animation: headLook 2.8s cubic-bezier(.3,1.3,.4,1) 1.5s both,
+                   headTrack 2.8s linear 4.3s infinite;
+      }
+      @keyframes headLook {
+        0%   { transform: rotate(0deg); }
+        18%  { transform: rotate(-4.5deg); }
+        70%  { transform: rotate(-4.5deg); }
+        100% { transform: rotate(-2.6deg); }
+      }
+      @keyframes headTrack {
+        from { transform: rotate(-2.6deg); }
+        to   { transform: rotate(2.6deg); }
+      }
+
+      /* boot: the aperture opens */
+      .iris-open { animation: irisOpen .42s cubic-bezier(.3,1.4,.4,1) 1.05s backwards; }
+      @keyframes irisOpen { from { transform: scale(.05); } to { transform: scale(1); } }
+
+      /* blink on twice the sweep period, so it never lands mid-saccade */
+      .lid { animation: blink 5.6s ease-in-out 5.4s infinite; }
+      @keyframes blink {
+        0%, 91%, 100% { transform: scaleY(1); }
+        94%           { transform: scaleY(.06); }
+        97%           { transform: scaleY(1); }
+      }
+
+      /* The pupil reads the name first, then hands off to the playhead. The
+         look ends exactly where the track begins, so the handoff at
+         TRACK_START is seamless rather than a jump. */
+      .pupil {
+        animation: pupilLook 2.8s cubic-bezier(.3,1.5,.4,1) 1.5s both,
+                   pupilTrack 2.8s linear 4.3s infinite;
+      }
+      @keyframes pupilLook {
+        0%   { transform: translateX(0); }
+        14%  { transform: translateX(-11px); }
+        70%  { transform: translateX(-11px); }
+        84%  { transform: translateX(-3px); }
+        100% { transform: translateX(-11px); }
+      }
+      @keyframes pupilTrack {
+        from { transform: translateX(-11px); }
+        to   { transform: translateX(11px); }
+      }
+
+      /* The playhead is pure motion - it carries no content. Unlike everything
+         else here it rests at opacity 0, because a playhead parked at the left
+         edge of a still frame reads as a stray rule, not as a composed panel. */
 
       .live {
         transform-box: fill-box; transform-origin: center;
@@ -134,13 +163,13 @@
 
       @media (prefers-reduced-motion: reduce) {
         .bar, .reveal, .name-in, .panel-border, .rec-dot,
-        .drop, .swing, .sway-mount, .sway-caps, .live {
+        .bot-in, .bob, .head-turn, .iris-open, .lid, .pupil, .live {
           animation: none !important;
           opacity: 1 !important;
           transform: none !important;
           stroke-dashoffset: 0 !important;
         }
-        .ring, .playhead { animation: none !important; opacity: 0 !important; }
+        .playhead { animation: none !important; opacity: 0 !important; }
       }
 </style>
   </defs>
@@ -215,40 +244,43 @@
   </g>
   <text x="756" y="224" class="caption reveal" style="animation-delay:.9s">44.1kHz &#183; Silero VAD</text>
 
-  <g class="drop">
-    <g transform="translate(624,74)">
-      <g class="sway-mount">
-        <!-- rod, running up out of frame -->
-        <rect x="-3" y="-84" width="6" height="84" rx="3" fill="#c9d1d9"/>
-        <rect x="-6" y="-30" width="12" height="15" rx="4" fill="#8b949e"/>
-        <circle cx="0" cy="0" r="6" fill="#8b949e"/>
-        <!-- clamp stays with the rod, so the joint reads as connected at the
-             extremes of the swing -->
-        <rect x="-5" y="-3" width="10" height="13" rx="3" fill="#8b949e"/>
+  <g class="bot-in">
+    <g transform="translate(614,150)">
+      <g class="bob">
+        <g class="head-turn">
+          <!-- antenna -->
+          <rect x="-2" y="-84" width="4" height="26" rx="2" fill="#8b949e"/>
+          <circle cx="0" cy="-88" r="4.5" fill="#d11440" class="live"/>
 
-        <g class="swing">
-          <g class="sway-caps">
-            <!-- yoke -->
-            <path d="M -12 6 L -12 22 M 12 6 L 12 22" stroke="#8b949e" stroke-width="3.5" stroke-linecap="round"/>
-            <rect x="-15" y="20" width="30" height="10" rx="5" fill="#8b949e"/>
+          <!-- shell -->
+          <rect x="-54" y="-58" width="108" height="94" rx="24" fill="#c9d1d9"/>
+          <rect x="-54" y="-58" width="108" height="94" rx="24" fill="none" stroke="#8b949e" stroke-width="1.5" opacity="0.5"/>
+          <!-- side mounts -->
+          <rect x="-62" y="-24" width="9" height="26" rx="4" fill="#8b949e"/>
+          <rect x="53" y="-24" width="9" height="26" rx="4" fill="#8b949e"/>
 
-            <!-- body, hanging nose-down and angled at the text block -->
-            <g transform="translate(0,29) rotate(-16)">
-              <rect x="-14" y="0" width="28" height="44" rx="7" fill="#c9d1d9"/>
-              <rect x="-14" y="39" width="28" height="52" rx="14" fill="#484f58"/>
-              <path d="M -11 52 H 11 M -12 62 H 12 M -12 72 H 12 M -11 82 H 11"
-                    stroke="#8b949e" stroke-width="1.8" stroke-linecap="round" opacity="0.75"/>
-              <rect x="-14" y="33" width="28" height="5" rx="2.5" fill="#d11440"/>
-              <circle class="live" cx="0" cy="16" r="3.6" fill="#d11440"/>
+          <!-- visor -->
+          <rect x="-44" y="-46" width="88" height="62" rx="18" fill="#0d1117"/>
 
-              <!-- capture rings, leaving the capsule -->
-              <g transform="translate(0,66)">
-                <g class="ring" style="animation-delay:2.1s"><circle r="20" fill="none" stroke="#d11440" stroke-width="1.6"/></g>
-                <g class="ring" style="animation-delay:2.97s"><circle r="20" fill="none" stroke="#d11440" stroke-width="1.6"/></g>
-                <g class="ring" style="animation-delay:3.83s"><circle r="20" fill="none" stroke="#d11440" stroke-width="1.6"/></g>
+          <!-- eye -->
+          <g transform="translate(0,-14)">
+            <g class="lid">
+              <g class="iris-open">
+                <circle r="24" fill="#161b22"/>
+                <circle r="24" fill="none" stroke="#d11440" stroke-width="1.5" opacity="0.55"/>
+                <g class="pupil">
+                  <circle r="12" fill="#d11440"/>
+                  <circle r="5.5" fill="#0d1117"/>
+                  <circle cx="-4.5" cy="-5" r="3" fill="#ffffff" opacity="0.75"/>
+                </g>
               </g>
             </g>
           </g>
+
+          <!-- vent, and the thruster nubs it hovers on -->
+          <path d="M -22 26 H 22 M -16 32 H 16" stroke="#8b949e" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+          <rect x="-30" y="35" width="16" height="8" rx="4" fill="#8b949e"/>
+          <rect x="14" y="35" width="16" height="8" rx="4" fill="#8b949e"/>
         </g>
       </g>
     </g>

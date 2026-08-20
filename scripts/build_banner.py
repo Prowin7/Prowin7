@@ -44,10 +44,13 @@ ASSETS = ROOT / "assets"
 
 W, H = 1200, 320
 
-# The mic drops into the corridor between the text block (which ends at x~478)
+# The bot floats in the corridor between the text block (which ends at x~478)
 # and the SIGNAL panel (which starts at x=740).
-MOUNT_X, MOUNT_Y = 624, 74
-DROP_FROM = -210          # how far above the mount the rig starts
+BOT_X, BOT_Y = 614, 150
+EYE_Y = -14               # eye centre, relative to the bot's own origin
+PUPIL_THROW = 11          # how far the pupil travels to either side
+LENS_R = 24               # must clear PUPIL_THROW + the iris radius, or the
+                          # iris bleeds off the lens at the ends of the sweep
 
 # Playhead sweep across the SIGNAL panel. The bars derive their timing from
 # these, so the kick and the playhead cannot drift apart.
@@ -55,6 +58,12 @@ PANEL_X, PANEL_W = 740, 420
 SCAN_X0, SCAN_X1 = 750, 1150
 SCAN_PERIOD = 2.8         # seconds for one sweep
 SCAN_START = 1.5          # after the bars have risen
+
+# The bot spends its first sweep reading the name, then locks onto the panel.
+# Offsetting by a whole period keeps the pupil in phase with the playhead: both
+# are driven from these two constants, so they cannot drift apart.
+LOOK_START = 1.5
+TRACK_START = SCAN_START + SCAN_PERIOD
 PANEL_INNER = 176         # usable height inside the panel border
 
 # A bar's kick is capped so a tall bar cannot scale out through the panel
@@ -69,13 +78,15 @@ SIGNAL = "#d11440"
 THEMES = {
     "dark": dict(
         name="#e6edf3", muted="#8b949e", stroke="#30363d",
-        metal="#c9d1d9", metal_dark="#8b949e", grille="#484f58",
-        ring_op="0.5", scan_op="0.85",
+        metal="#c9d1d9", metal_dark="#8b949e",
+        visor="#0d1117", lens="#161b22",
+        scan_op="0.85",
     ),
     "light": dict(
         name="#0d1117", muted="#57606a", stroke="#d0d7de",
-        metal="#57606a", metal_dark="#8c959f", grille="#afb8c1",
-        ring_op="0.38", scan_op="0.7",
+        metal="#57606a", metal_dark="#8c959f",
+        visor="#161b22", lens="#0d1117",
+        scan_op="0.7",
     ),
 }
 
@@ -199,43 +210,72 @@ def css(t: dict) -> str:
       @keyframes recPop {{ from {{ transform: scale(0); opacity: 0; }} to {{ transform: scale(1); opacity: 1; }} }}
       @keyframes pulse {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: .35; }} }}
 
-      /* ---------- the mic ---------- */
+      /* ---------- the bot ---------- */
 
-      /* the rig drops in and overshoots */
-      .drop {{ animation: drop 1.05s cubic-bezier(.2,1.3,.36,1) .5s backwards; }}
-      @keyframes drop {{ from {{ transform: translateY({DROP_FROM}px); }} to {{ transform: translateY(0); }} }}
-
-      /* follow-through: the capsule lags the mount, swings past plumb, settles */
-      .swing {{ animation: swing 2.1s cubic-bezier(.26,1.1,.4,1) .5s backwards; }}
-      @keyframes swing {{
-        0%   {{ transform: rotate(-15deg); }}
-        30%  {{ transform: rotate(11deg); }}
-        52%  {{ transform: rotate(-6deg); }}
-        72%  {{ transform: rotate(3deg); }}
-        88%  {{ transform: rotate(-1.3deg); }}
-        100% {{ transform: rotate(0deg); }}
-      }}
-      /* two idle periods that do not divide into each other */
-      .sway-mount {{ animation: swayMount 7.5s ease-in-out 2.2s infinite; }}
-      @keyframes swayMount {{
-        0%, 100% {{ transform: rotate(.8deg); }}
-        50%      {{ transform: rotate(-.8deg); }}
-      }}
-      .sway-caps {{ animation: swayCaps 6.1s ease-in-out 2.6s infinite; }}
-      @keyframes swayCaps {{
-        0%, 100% {{ transform: rotate(-1.5deg); }}
-        50%      {{ transform: rotate(2.2deg); }}
+      /* arrives with a settle rather than a fade */
+      .bot-in {{ animation: botIn .9s cubic-bezier(.2,1.32,.36,1) .45s backwards; }}
+      @keyframes botIn {{
+        from {{ opacity: 0; transform: translateY(-38px) scale(.86); }}
+        to   {{ opacity: 1; transform: translateY(0)     scale(1); }}
       }}
 
-      /* Capture rings and the playhead are pure motion - they carry no content.
-         Unlike everything else here they rest at opacity 0, because a ring
-         frozen mid-expansion reads as a rendering bug, not as a still frame. */
-      .ring {{ opacity: 0; animation: ringOut 2.6s ease-out infinite backwards; }}
-      @keyframes ringOut {{
-        0%   {{ opacity: 0;   transform: scale(.35); }}
-        18%  {{ opacity: {t['ring_op']}; }}
-        100% {{ opacity: 0;   transform: scale(2); }}
+      /* hovering, on a period that shares no factor with the sweep */
+      .bob {{ animation: bob 4.3s ease-in-out 1.3s infinite; }}
+      @keyframes bob {{
+        0%, 100% {{ transform: translateY(-3px); }}
+        50%      {{ transform: translateY(3px); }}
       }}
+
+      /* the head leads the eye: it turns to the name, then tracks the panel */
+      .head-turn {{
+        animation: headLook {SCAN_PERIOD}s cubic-bezier(.3,1.3,.4,1) {LOOK_START}s both,
+                   headTrack {SCAN_PERIOD}s linear {TRACK_START}s infinite;
+      }}
+      @keyframes headLook {{
+        0%   {{ transform: rotate(0deg); }}
+        18%  {{ transform: rotate(-4.5deg); }}
+        70%  {{ transform: rotate(-4.5deg); }}
+        100% {{ transform: rotate(-2.6deg); }}
+      }}
+      @keyframes headTrack {{
+        from {{ transform: rotate(-2.6deg); }}
+        to   {{ transform: rotate(2.6deg); }}
+      }}
+
+      /* boot: the aperture opens */
+      .iris-open {{ animation: irisOpen .42s cubic-bezier(.3,1.4,.4,1) 1.05s backwards; }}
+      @keyframes irisOpen {{ from {{ transform: scale(.05); }} to {{ transform: scale(1); }} }}
+
+      /* blink on twice the sweep period, so it never lands mid-saccade */
+      .lid {{ animation: blink {SCAN_PERIOD * 2}s ease-in-out {TRACK_START + 1.1}s infinite; }}
+      @keyframes blink {{
+        0%, 91%, 100% {{ transform: scaleY(1); }}
+        94%           {{ transform: scaleY(.06); }}
+        97%           {{ transform: scaleY(1); }}
+      }}
+
+      /* The pupil reads the name first, then hands off to the playhead. The
+         look ends exactly where the track begins, so the handoff at
+         TRACK_START is seamless rather than a jump. */
+      .pupil {{
+        animation: pupilLook {SCAN_PERIOD}s cubic-bezier(.3,1.5,.4,1) {LOOK_START}s both,
+                   pupilTrack {SCAN_PERIOD}s linear {TRACK_START}s infinite;
+      }}
+      @keyframes pupilLook {{
+        0%   {{ transform: translateX(0); }}
+        14%  {{ transform: translateX(-{PUPIL_THROW}px); }}
+        70%  {{ transform: translateX(-{PUPIL_THROW}px); }}
+        84%  {{ transform: translateX(-3px); }}
+        100% {{ transform: translateX(-{PUPIL_THROW}px); }}
+      }}
+      @keyframes pupilTrack {{
+        from {{ transform: translateX(-{PUPIL_THROW}px); }}
+        to   {{ transform: translateX({PUPIL_THROW}px); }}
+      }}
+
+      /* The playhead is pure motion - it carries no content. Unlike everything
+         else here it rests at opacity 0, because a playhead parked at the left
+         edge of a still frame reads as a stray rule, not as a composed panel. */
 
       .live {{
         transform-box: fill-box; transform-origin: center;
@@ -245,61 +285,66 @@ def css(t: dict) -> str:
 
       @media (prefers-reduced-motion: reduce) {{
         .bar, .reveal, .name-in, .panel-border, .rec-dot,
-        .drop, .swing, .sway-mount, .sway-caps, .live {{
+        .bot-in, .bob, .head-turn, .iris-open, .lid, .pupil, .live {{
           animation: none !important;
           opacity: 1 !important;
           transform: none !important;
           stroke-dashoffset: 0 !important;
         }}
-        .ring, .playhead {{ animation: none !important; opacity: 0 !important; }}
+        .playhead {{ animation: none !important; opacity: 0 !important; }}
       }}
 """
 
 
-def mic(t: dict) -> str:
+def bot(t: dict) -> str:
     """
-    Microphone on a drop rod.
+    The listening unit.
 
-    Rotation centres come from nested translate/rotate group pairs rather than
+    Transform origins come from nested translate/rotate group pairs rather than
     CSS transform-origin, so they do not depend on transform-box support: each
-    rotating group turns about its own local origin and the wrapper before it
-    puts that origin on the joint.
+    animated group transforms about its own local origin and the wrapper before
+    it puts that origin where the joint is. The eye stack is
+    lid > iris > pupil, all nested, so blinking, opening and looking compose
+    instead of overwriting one another's transform.
     """
     return f"""
-  <g class="drop">
-    <g transform="translate({MOUNT_X},{MOUNT_Y})">
-      <g class="sway-mount">
-        <!-- rod, running up out of frame -->
-        <rect x="-3" y="{-MOUNT_Y - 10}" width="6" height="{MOUNT_Y + 10}" rx="3" fill="{t['metal']}"/>
-        <rect x="-6" y="-30" width="12" height="15" rx="4" fill="{t['metal_dark']}"/>
-        <circle cx="0" cy="0" r="6" fill="{t['metal_dark']}"/>
-        <!-- clamp stays with the rod, so the joint reads as connected at the
-             extremes of the swing -->
-        <rect x="-5" y="-3" width="10" height="13" rx="3" fill="{t['metal_dark']}"/>
+  <g class="bot-in">
+    <g transform="translate({BOT_X},{BOT_Y})">
+      <g class="bob">
+        <g class="head-turn">
+          <!-- antenna -->
+          <rect x="-2" y="-84" width="4" height="26" rx="2" fill="{t['metal_dark']}"/>
+          <circle cx="0" cy="-88" r="4.5" fill="{SIGNAL}" class="live"/>
 
-        <g class="swing">
-          <g class="sway-caps">
-            <!-- yoke -->
-            <path d="M -12 6 L -12 22 M 12 6 L 12 22" stroke="{t['metal_dark']}" stroke-width="3.5" stroke-linecap="round"/>
-            <rect x="-15" y="20" width="30" height="10" rx="5" fill="{t['metal_dark']}"/>
+          <!-- shell -->
+          <rect x="-54" y="-58" width="108" height="94" rx="24" fill="{t['metal']}"/>
+          <rect x="-54" y="-58" width="108" height="94" rx="24" fill="none" stroke="{t['metal_dark']}" stroke-width="1.5" opacity="0.5"/>
+          <!-- side mounts -->
+          <rect x="-62" y="-24" width="9" height="26" rx="4" fill="{t['metal_dark']}"/>
+          <rect x="53" y="-24" width="9" height="26" rx="4" fill="{t['metal_dark']}"/>
 
-            <!-- body, hanging nose-down and angled at the text block -->
-            <g transform="translate(0,29) rotate(-16)">
-              <rect x="-14" y="0" width="28" height="44" rx="7" fill="{t['metal']}"/>
-              <rect x="-14" y="39" width="28" height="52" rx="14" fill="{t['grille']}"/>
-              <path d="M -11 52 H 11 M -12 62 H 12 M -12 72 H 12 M -11 82 H 11"
-                    stroke="{t['metal_dark']}" stroke-width="1.8" stroke-linecap="round" opacity="0.75"/>
-              <rect x="-14" y="33" width="28" height="5" rx="2.5" fill="{SIGNAL}"/>
-              <circle class="live" cx="0" cy="16" r="3.6" fill="{SIGNAL}"/>
+          <!-- visor -->
+          <rect x="-44" y="-46" width="88" height="62" rx="18" fill="{t['visor']}"/>
 
-              <!-- capture rings, leaving the capsule -->
-              <g transform="translate(0,66)">
-                <g class="ring" style="animation-delay:2.1s"><circle r="20" fill="none" stroke="{SIGNAL}" stroke-width="1.6"/></g>
-                <g class="ring" style="animation-delay:2.97s"><circle r="20" fill="none" stroke="{SIGNAL}" stroke-width="1.6"/></g>
-                <g class="ring" style="animation-delay:3.83s"><circle r="20" fill="none" stroke="{SIGNAL}" stroke-width="1.6"/></g>
+          <!-- eye -->
+          <g transform="translate(0,{EYE_Y})">
+            <g class="lid">
+              <g class="iris-open">
+                <circle r="{LENS_R}" fill="{t['lens']}"/>
+                <circle r="{LENS_R}" fill="none" stroke="{SIGNAL}" stroke-width="1.5" opacity="0.55"/>
+                <g class="pupil">
+                  <circle r="12" fill="{SIGNAL}"/>
+                  <circle r="5.5" fill="{t['visor']}"/>
+                  <circle cx="-4.5" cy="-5" r="3" fill="#ffffff" opacity="0.75"/>
+                </g>
               </g>
             </g>
           </g>
+
+          <!-- vent, and the thruster nubs it hovers on -->
+          <path d="M -22 26 H 22 M -16 32 H 16" stroke="{t['metal_dark']}" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+          <rect x="-30" y="35" width="16" height="8" rx="4" fill="{t['metal_dark']}"/>
+          <rect x="14" y="35" width="16" height="8" rx="4" fill="{t['metal_dark']}"/>
         </g>
       </g>
     </g>
@@ -334,7 +379,7 @@ def build_banner(t: dict, bars: str) -> str:
     <rect x="{SCAN_X0}" y="52" width="2" height="176" fill="url(#scanfade)"/>
   </g>
   <text x="756" y="224" class="caption reveal" style="animation-delay:.9s">44.1kHz &#183; Silero VAD</text>
-{mic(t)}</svg>
+{bot(t)}</svg>
 """
 
 
