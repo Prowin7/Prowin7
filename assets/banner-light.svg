@@ -40,6 +40,20 @@
         100% { transform: translateY(0) rotate(0deg); }
       }
 
+      /* ---------- watching eyes ---------- */
+      @keyframes watchEyes {
+        0%, 8%   { transform: translateX(0); }
+        20%, 32% { transform: translateX(-5px); }
+        45%, 55% { transform: translateX(0); }
+        68%, 80% { transform: translateX(5px); }
+        92%, 100% { transform: translateX(0); }
+      }
+      @keyframes blinkEyes {
+        0%, 92%, 100% { transform: scaleY(1); }
+        95%           { transform: scaleY(0.08); }
+        97%           { transform: scaleY(1); }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         .reveal, .name-in {
           animation: none !important;
@@ -47,6 +61,7 @@
           transform: none !important;
         }
         .icons g g { animation: none !important; transform: none !important; }
+        .eyes g { animation: none !important; transform: none !important; }
       }
 </style>
   </defs>
@@ -131,6 +146,17 @@
     <circle cx="6" cy="18" r="2" fill="#F05033"/>
     <circle cx="17" cy="12" r="2" fill="#F05033"/>
     <path d="M6 8v8M6 12h9a2 2 0 002-2" stroke="#F05033" stroke-width="1.4" fill="none"/>
+      </g>
+    </g>
+  </g>
+
+  <g class="eyes" aria-hidden="true" transform="translate(1140 46)">
+    <g style="transform-box:fill-box;transform-origin:center;animation:blinkEyes 5.5s ease-in-out infinite;">
+      <path d="M-29.0 0 Q-16.0 -9 -3.0 0 Q-16.0 9 -29.0 0 Z" fill="#f0f2f5"/>
+      <path d="M3.0 0 Q16.0 -9 29.0 0 Q16.0 9 3.0 0 Z" fill="#f0f2f5"/>
+      <g class="pupils" style="transform-box:fill-box;transform-origin:center;animation:watchEyes 6s ease-in-out infinite;">
+        <circle cx="-16.0" cy="0" r="4.2" fill="#d11440"/><circle cx="-17.4" cy="-1.4" r="1.1" fill="#fff"/>
+        <circle cx="16.0" cy="0" r="4.2" fill="#d11440"/><circle cx="14.6" cy="-1.4" r="1.1" fill="#fff"/>
       </g>
     </g>
   </g>

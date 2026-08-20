@@ -219,6 +219,39 @@ def icon_field() -> str:
 """
 
 
+# The watching eyes: a pair of almond-shaped sclerae that never move, plus a
+# pupil pair that glances left, centre, right, centre on a loop, with an
+# occasional blink squashing the whole thing flat. Sclera and pupils are
+# separate elements for the same reason position and float are split in
+# icon_field() - a CSS animation on `transform` replaces the property outright,
+# so a moving pupil and a static sclera can't share one transformed element.
+EYES_X, EYES_Y = 1140, 46
+EYES_GAP = 32          # centre-to-centre distance between the two eyes
+
+
+def eyes_field() -> str:
+    def sclera(cx: float) -> str:
+        return f'<path d="M{cx - 13:.1f} 0 Q{cx:.1f} -9 {cx + 13:.1f} 0 Q{cx:.1f} 9 {cx - 13:.1f} 0 Z" fill="#f0f2f5"/>'
+
+    def pupil(cx: float) -> str:
+        return (f'<circle cx="{cx:.1f}" cy="0" r="4.2" fill="{SIGNAL}"/>'
+                f'<circle cx="{cx - 1.4:.1f}" cy="-1.4" r="1.1" fill="#fff"/>')
+
+    left, right = -EYES_GAP / 2, EYES_GAP / 2
+    return f"""
+  <g class="eyes" aria-hidden="true" transform="translate({EYES_X} {EYES_Y})">
+    <g style="transform-box:fill-box;transform-origin:center;animation:blinkEyes 5.5s ease-in-out infinite;">
+      {sclera(left)}
+      {sclera(right)}
+      <g class="pupils" style="transform-box:fill-box;transform-origin:center;animation:watchEyes 6s ease-in-out infinite;">
+        {pupil(left)}
+        {pupil(right)}
+      </g>
+    </g>
+  </g>
+"""
+
+
 def css(t: dict) -> str:
     return f"""
       .eyebrow {{ font: 600 13px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; letter-spacing: .18em; fill: {SIGNAL}; }}
@@ -246,6 +279,20 @@ def css(t: dict) -> str:
       /* ---------- floating icon field ---------- */
 {icon_float_keyframes()}
 
+      /* ---------- watching eyes ---------- */
+      @keyframes watchEyes {{
+        0%, 8%   {{ transform: translateX(0); }}
+        20%, 32% {{ transform: translateX(-5px); }}
+        45%, 55% {{ transform: translateX(0); }}
+        68%, 80% {{ transform: translateX(5px); }}
+        92%, 100% {{ transform: translateX(0); }}
+      }}
+      @keyframes blinkEyes {{
+        0%, 92%, 100% {{ transform: scaleY(1); }}
+        95%           {{ transform: scaleY(0.08); }}
+        97%           {{ transform: scaleY(1); }}
+      }}
+
       @media (prefers-reduced-motion: reduce) {{
         .reveal, .name-in {{
           animation: none !important;
@@ -253,6 +300,7 @@ def css(t: dict) -> str:
           transform: none !important;
         }}
         .icons g g {{ animation: none !important; transform: none !important; }}
+        .eyes g {{ animation: none !important; transform: none !important; }}
       }}
 """
 
@@ -262,7 +310,7 @@ def build_banner(t: dict) -> str:
   <defs>
     <style>{css(t)}</style>
   </defs>
-{icon_field()}
+{icon_field()}{eyes_field()}
   <text x="64" y="92"  class="eyebrow reveal" style="animation-delay:.05s">APPLIED AI &#183; BACKEND ENGINEER</text>
   <text x="64" y="152" class="name name-in">Praveen Nukilla</text>
   <text x="64" y="188" class="role reveal"    style="animation-delay:.28s">Speech-AI systems on GCP + Gemini</text>
