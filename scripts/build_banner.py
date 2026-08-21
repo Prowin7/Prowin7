@@ -219,6 +219,46 @@ def icon_field() -> str:
 """
 
 
+# The swinging astronaut: dangles from two tethers anchored at a fixed point
+# near the top-right corner and swings as a rigid pendulum - the whole body
+# (tethers included) rotates together about the anchor, which is why it's
+# all one group rather than split like the icons' position/animation pair.
+# transform-origin sits at the top of the group's own bounding box (the
+# anchor point, where the tethers start), so rotate() swings everything
+# below it like it's actually hanging from that point.
+ASTRO_X, ASTRO_Y = 1130, 14
+ASTRO_HANG = 20   # visible tether length between the anchor and the top of the helmet
+
+
+def astronaut_field(t: dict) -> str:
+    d = ASTRO_HANG
+    return f"""
+  <g class="astronaut" aria-hidden="true" transform="translate({ASTRO_X} {ASTRO_Y})">
+    <g style="transform-box:fill-box;transform-origin:50% 0%;animation:pendulumSwing 4.5s ease-in-out infinite;">
+      <line x1="-8" y1="0" x2="-8" y2="{d}" stroke="{t['muted']}" stroke-width="1" opacity="0.6"/>
+      <line x1="8"  y1="0" x2="8"  y2="{d}" stroke="{t['muted']}" stroke-width="1" opacity="0.6"/>
+
+      <path d="M-12 {d + 26} Q-20 {d + 40} -16 {d + 54}" stroke="{t['muted']}" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M12 {d + 26} Q20 {d + 42} 14 {d + 56}" stroke="{t['muted']}" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle cx="-16" cy="{d + 54}" r="3" fill="{t['muted']}"/>
+      <circle cx="14" cy="{d + 56}" r="3" fill="{t['muted']}"/>
+
+      <path d="M-6 {d + 50} Q-10 {d + 64} -4 {d + 78}" stroke="{t['muted']}" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M6 {d + 50} Q14 {d + 62} 10 {d + 76}" stroke="{t['muted']}" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <circle cx="-4" cy="{d + 78}" r="3.5" fill="{t['muted']}"/>
+      <circle cx="10" cy="{d + 76}" r="3.5" fill="{t['muted']}"/>
+
+      <rect x="-12" y="{d + 22}" width="24" height="28" rx="10" fill="#f5f6f8" stroke="{t['muted']}" stroke-width="1.4"/>
+      <circle cx="0" cy="{d + 35}" r="1.8" fill="{SIGNAL}"/>
+
+      <circle cx="0" cy="{d + 12}" r="11" fill="#f5f6f8" stroke="{t['muted']}" stroke-width="1.4"/>
+      <ellipse cx="1" cy="{d + 12}" rx="6" ry="7" fill="#171a1f"/>
+      <circle cx="-1.5" cy="{d + 9.5}" r="1.4" fill="#fff" opacity="0.85"/>
+    </g>
+  </g>
+"""
+
+
 def css(t: dict) -> str:
     return f"""
       .eyebrow {{ font: 600 13px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; letter-spacing: .18em; fill: {SIGNAL}; }}
@@ -246,6 +286,13 @@ def css(t: dict) -> str:
       /* ---------- floating icon field ---------- */
 {icon_float_keyframes()}
 
+      /* ---------- swinging astronaut ---------- */
+      @keyframes pendulumSwing {{
+        0%   {{ transform: rotate(-7deg); }}
+        50%  {{ transform: rotate(7deg); }}
+        100% {{ transform: rotate(-7deg); }}
+      }}
+
       @media (prefers-reduced-motion: reduce) {{
         .reveal, .name-in {{
           animation: none !important;
@@ -253,6 +300,7 @@ def css(t: dict) -> str:
           transform: none !important;
         }}
         .icons g g {{ animation: none !important; transform: none !important; }}
+        .astronaut g {{ animation: none !important; transform: none !important; }}
       }}
 """
 
@@ -262,7 +310,7 @@ def build_banner(t: dict) -> str:
   <defs>
     <style>{css(t)}</style>
   </defs>
-{icon_field()}
+{icon_field()}{astronaut_field(t)}
   <text x="64" y="92"  class="eyebrow reveal" style="animation-delay:.05s">APPLIED AI &#183; BACKEND ENGINEER</text>
   <text x="64" y="152" class="name name-in">Praveen Nukilla</text>
   <text x="64" y="188" class="role reveal"    style="animation-delay:.28s">Speech-AI systems on GCP + Gemini</text>
