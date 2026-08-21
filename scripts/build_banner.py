@@ -226,34 +226,74 @@ def icon_field() -> str:
 # transform-origin sits at the top of the group's own bounding box (the
 # anchor point, where the tethers start), so rotate() swings everything
 # below it like it's actually hanging from that point.
-ASTRO_X, ASTRO_Y = 1130, 14
-ASTRO_HANG = 20   # visible tether length between the anchor and the top of the helmet
+#
+# Modelled after a reference photo of a suited astronaut on a harness: round
+# helmet with a big dark visor (not a single eye-dot - that read as a
+# cartoon cyclops, not a helmet), a backpack peeking out from behind the
+# torso, a chest control panel, and a reclined, bent-knee pose with one arm
+# reached up to grip its own tether rather than two limbs hanging identically
+# limp. The two tethers land at different points (shoulder vs. raised hand)
+# so they cross on the way down instead of running parallel.
+ASTRO_X, ASTRO_Y = 1120, 12
+ASTRO_HANG = 24   # visible tether length between the anchor and the top of the helmet
+
+
+def _limb(t: dict, d_attr: str) -> str:
+    """A suit limb: a dark outline stroke under a lighter fill stroke, so it
+    reads as a filled, outlined tube rather than a flat line."""
+    return (f'<path d="{d_attr}" stroke="#12151a" stroke-width="9.5" fill="none" stroke-linecap="round"/>'
+            f'<path d="{d_attr}" stroke="#eef0f3" stroke-width="6.5" fill="none" stroke-linecap="round"/>')
 
 
 def astronaut_field(t: dict) -> str:
     d = ASTRO_HANG
+    dark = "#12151a"
+    suit = "#f5f6f8"
+    shade = "#dcdfe3"
     return f"""
   <g class="astronaut" aria-hidden="true" transform="translate({ASTRO_X} {ASTRO_Y})">
-    <g style="transform-box:fill-box;transform-origin:50% 0%;animation:pendulumSwing 4.5s ease-in-out infinite;">
-      <line x1="-8" y1="0" x2="-8" y2="{d}" stroke="{t['muted']}" stroke-width="1" opacity="0.6"/>
-      <line x1="8"  y1="0" x2="8"  y2="{d}" stroke="{t['muted']}" stroke-width="1" opacity="0.6"/>
+    <g style="transform-box:fill-box;transform-origin:50% 0%;animation:pendulumSwing 4.8s ease-in-out infinite;">
+      <line x1="-7" y1="0" x2="-9" y2="{d + 40}" stroke="{t['muted']}" stroke-width="1.2" opacity="0.65"/>
+      <line x1="6"  y1="0" x2="27" y2="{d + 9}"  stroke="{t['muted']}" stroke-width="1.2" opacity="0.65"/>
 
-      <path d="M-12 {d + 26} Q-20 {d + 40} -16 {d + 54}" stroke="{t['muted']}" stroke-width="5" fill="none" stroke-linecap="round"/>
-      <path d="M12 {d + 26} Q20 {d + 42} 14 {d + 56}" stroke="{t['muted']}" stroke-width="5" fill="none" stroke-linecap="round"/>
-      <circle cx="-16" cy="{d + 54}" r="3" fill="{t['muted']}"/>
-      <circle cx="14" cy="{d + 56}" r="3" fill="{t['muted']}"/>
+      <!-- backpack, drawn first so it peeks out from behind the torso -->
+      <rect x="-21" y="{d + 42}" width="15" height="40" rx="6" fill="{shade}" stroke="{dark}" stroke-width="1.8"/>
 
-      <path d="M-6 {d + 50} Q-10 {d + 64} -4 {d + 78}" stroke="{t['muted']}" stroke-width="6" fill="none" stroke-linecap="round"/>
-      <path d="M6 {d + 50} Q14 {d + 62} 10 {d + 76}" stroke="{t['muted']}" stroke-width="6" fill="none" stroke-linecap="round"/>
-      <circle cx="-4" cy="{d + 78}" r="3.5" fill="{t['muted']}"/>
-      <circle cx="10" cy="{d + 76}" r="3.5" fill="{t['muted']}"/>
+      <!-- far (left) arm: relaxed, bent at the elbow, resting near the hip -->
+      {_limb(t, f"M-16 {d + 46} Q-29 {d + 60} -17 {d + 74}")}
+      <circle cx="-17" cy="{d + 74}" r="5" fill="{shade}" stroke="{dark}" stroke-width="1.6"/>
 
-      <rect x="-12" y="{d + 22}" width="24" height="28" rx="10" fill="#f5f6f8" stroke="{t['muted']}" stroke-width="1.4"/>
-      <circle cx="0" cy="{d + 35}" r="1.8" fill="{SIGNAL}"/>
+      <!-- legs: knees drawn up and out, reclined seated pose -->
+      {_limb(t, f"M-8 {d + 84} Q-25 {d + 96} -19 {d + 114} Q-15 {d + 128} -2 {d + 124}")}
+      {_limb(t, f"M8 {d + 84} Q23 {d + 98} 17 {d + 116} Q13 {d + 130} 26 {d + 128}")}
+      <ellipse cx="-2" cy="{d + 124}" rx="7" ry="4.5" fill="{shade}" stroke="{dark}" stroke-width="1.6"/>
+      <ellipse cx="26" cy="{d + 128}" rx="7" ry="4.5" fill="{shade}" stroke="{dark}" stroke-width="1.6"/>
 
-      <circle cx="0" cy="{d + 12}" r="11" fill="#f5f6f8" stroke="{t['muted']}" stroke-width="1.4"/>
-      <ellipse cx="1" cy="{d + 12}" rx="6" ry="7" fill="#171a1f"/>
-      <circle cx="-1.5" cy="{d + 9.5}" r="1.4" fill="#fff" opacity="0.85"/>
+      <!-- torso -->
+      <rect x="-17" y="{d + 40}" width="34" height="46" rx="16" fill="{suit}" stroke="{dark}" stroke-width="2.2"/>
+
+      <!-- chest control panel -->
+      <rect x="-8" y="{d + 57}" width="17" height="13" rx="2.5" fill="{shade}" stroke="{dark}" stroke-width="1.3"/>
+      <circle cx="-3" cy="{d + 63}" r="1.6" fill="{SIGNAL}"/>
+      <line x1="2" y1="{d + 61}" x2="6" y2="{d + 61}" stroke="{dark}" stroke-width="1"/>
+      <line x1="2" y1="{d + 65}" x2="6" y2="{d + 65}" stroke="{dark}" stroke-width="1"/>
+
+      <!-- shoulder joints -->
+      <circle cx="-16" cy="{d + 46}" r="7" fill="{shade}" stroke="{dark}" stroke-width="1.6"/>
+      <circle cx="16"  cy="{d + 46}" r="7" fill="{shade}" stroke="{dark}" stroke-width="1.6"/>
+
+      <!-- near (right) arm: raised, gripping its own tether -->
+      {_limb(t, f"M16 {d + 46} Q31 {d + 32} 27 {d + 9}")}
+      <circle cx="27" cy="{d + 9}" r="5.2" fill="{shade}" stroke="{dark}" stroke-width="1.6"/>
+
+      <!-- neck ring -->
+      <ellipse cx="0" cy="{d + 38}" rx="12" ry="5" fill="{shade}" stroke="{dark}" stroke-width="1.6"/>
+
+      <!-- helmet -->
+      <circle cx="0" cy="{d + 18}" r="21" fill="{suit}" stroke="{dark}" stroke-width="2.4"/>
+      <ellipse cx="3" cy="{d + 19}" rx="14" ry="16" fill="#0a0b0d"/>
+      <path d="M-7 {d + 9} Q-1 {d} 8 {d + 5}" stroke="#ffffff" stroke-width="2.6" fill="none" stroke-linecap="round" opacity="0.35"/>
+      <circle cx="-17" cy="{d + 25}" r="1.7" fill="{SIGNAL}"/>
     </g>
   </g>
 """
