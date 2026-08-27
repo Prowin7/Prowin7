@@ -1,5 +1,8 @@
 <div align="center">
-<img src="./assets/profile-card.svg" width="100%" alt="Praveen Nukilla — about, languages, stack, contact and GitHub stats" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/profile-card-dark.svg" />
+  <img src="./assets/profile-card.svg" width="100%" alt="Praveen Nukilla — about, languages, stack, contact and GitHub stats" />
+</picture>
 </div>
 
 <img src="./assets/rule.svg" width="100%" alt="" />

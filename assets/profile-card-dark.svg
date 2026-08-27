@@ -1,0 +1,104 @@
+<svg width="1200" height="840" viewBox="0 0 1200 840" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Praveen Nukilla profile card">
+  <defs>
+    <style>text { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }</style>
+  </defs>
+<rect x="0" y="0" width="1200" height="840" fill="#0d1117"/>
+<g transform="translate(48 31) scale(0.9167)" fill="none" stroke="#8b949e" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5A2.5 2.5 0 015.5 3H10a2 2 0 012 2v14a2 2 0 00-2-2H3z"/><path d="M21 5.5A2.5 2.5 0 0018.5 3H14a2 2 0 00-2 2v14a2 2 0 012-2h7z"/></g><text x="84" y="49" font-family="ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace" font-size="16" fill="#8b949e">Prowin7</text><text x="174" y="49" font-family="ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace" font-size="16" fill="#30363d">/</text><text x="196" y="49" font-family="ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace" font-size="16" fill="#e6edf3">README.md</text><g transform="translate(1130 32) scale(0.9167)" fill="none" stroke="#8b949e" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></g><line x1="48" y1="74" x2="1152" y2="74" stroke="#30363d" stroke-width="1"/>
+<rect x="48" y="100" width="618.24" height="250" rx="14" fill="#161b22" stroke="#30363d"/><g transform="translate(72 118) scale(0.7917)" fill="none" stroke="#e6edf3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20a7.5 7.5 0 0115 0"/></g><text x="100" y="133" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" letter-spacing="0.1em" fill="#e6edf3">ABOUT ME</text>
+<line x1="72" y1="170" x2="72" y2="319" stroke="#30363d" stroke-width="1"/>
+    <circle cx="72" cy="173" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="178" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">OS</text><text x="160" y="178" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="180" y="178" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">macOS, Ubuntu (GCP)</text>
+    <circle cx="72" cy="202" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="207" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Host</text><text x="160" y="207" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="180" y="207" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">Applied AI &amp; Backend Eng.</text>
+    <circle cx="72" cy="231" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="236" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Kernel</text><text x="160" y="236" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="180" y="236" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">Prayagraj, India</text>
+    <circle cx="72" cy="260" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="265" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">IDE</text><text x="160" y="265" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="180" y="265" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">VS Code</text>
+    <circle cx="72" cy="289" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="294" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Shell</text><text x="160" y="294" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="180" y="294" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">zsh</text>
+    <circle cx="72" cy="318" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="323" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Education</text><text x="160" y="323" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="180" y="323" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">B.Tech ECE, IIIT-A, 2026</text>
+
+    <clipPath id="stillClip"><rect x="690.24" y="100" width="461.76" height="250" rx="12"/></clipPath>
+    <rect x="690.24" y="100" width="461.76" height="250" rx="12" fill="#161b22"/>
+    <g clip-path="url(#stillClip)">
+      <!-- window light falling across the back wall -->
+      <path d="M690.24 100 L884.1792 100 L995.0016 295.0 L690.24 295.0 Z" fill="#1c2430"/>
+      <path d="M902.6496 100 L967.296 100 L1068.8832 295.0 L1004.2368 295.0 Z" fill="#1c2430" opacity="0.7"/>
+      <rect x="690.24" y="295.0" width="461.76" height="55.0" fill="#2b323c"/>
+
+      <!-- branch: stems then leaves, so leaves sit on top of the stems -->
+      <g stroke="#7e8b74" stroke-width="1.6" fill="none" stroke-linecap="round">
+        <path d="M801.0624 265.0 C796.4448 225.0 791.8272 205.0 782.592 183.0"/>
+        <path d="M801.0624 255.0 C814.9152 225.0 828.768 211.0 842.6208 197.0"/>
+      </g>
+      <g transform="translate(801.1 191.0) rotate(-58)"><ellipse cx="15.0" cy="0" rx="15.0" ry="6.5" fill="#7e8b74" opacity="0.85"/></g><g transform="translate(801.1 200.0) rotate(-28)"><ellipse cx="18.0" cy="0" rx="18.0" ry="6.5" fill="#9aa68f" opacity="0.85"/></g><g transform="translate(801.1 209.0) rotate(4)"><ellipse cx="17.0" cy="0" rx="17.0" ry="6.5" fill="#7e8b74" opacity="0.85"/></g><g transform="translate(801.1 218.0) rotate(34)"><ellipse cx="15.0" cy="0" rx="15.0" ry="6.5" fill="#9aa68f" opacity="0.85"/></g><g transform="translate(801.1 227.0) rotate(-42)"><ellipse cx="12.0" cy="0" rx="12.0" ry="6.5" fill="#7e8b74" opacity="0.85"/></g><g transform="translate(801.1 236.0) rotate(18)"><ellipse cx="12.0" cy="0" rx="12.0" ry="6.5" fill="#9aa68f" opacity="0.85"/></g>
+
+      <!-- vase -->
+      <path d="M777.9744000000001 261.0 q23.088 -14 46.176 0 l0 30 q0 6 -6 6 h-34.632 q-6 0 -6 -6 z"
+            fill="#161b22" stroke="#2b323c" stroke-width="1.4"/>
+
+      <!-- stacked books -->
+      <g stroke="#2b323c" stroke-width="1.2">
+        <rect x="847.2384" y="265.0" width="138.528" height="11" rx="2" fill="#161b22"/>
+        <rect x="856.4736" y="276.0" width="138.528" height="11" rx="2" fill="#232a34"/>
+        <rect x="851.856" y="287.0" width="143.1456" height="10" rx="2" fill="#9aa68f" opacity="0.55"/>
+      </g>
+
+      <!-- mug, with a curl of steam -->
+      <path d="M1036.56 257.0 h60.028800000000004 v26 q0 10 -10 10 h-25.3968 q-10 0 -10 -10 z"
+            fill="#161b22" stroke="#2b323c" stroke-width="1.4"/>
+      <path d="M1096.5888 265.0 q12 0 12 9 t-12 9" fill="none" stroke="#2b323c" stroke-width="1.4"/>
+      <path d="M1038.8688 257.0 h55.411199999999994 v5 h-55.411199999999994 z" fill="#c8a882" opacity="0.55"/>
+      <path d="M1055.0304 247.0 q-5 -8 0 -15 q5 -7 0 -14" fill="none" stroke="#2b323c" stroke-width="1.5" stroke-linecap="round"/>
+
+      <!-- contact shadows pooling to the right of each object -->
+      <g fill="#2b323c" opacity="0.55">
+        <ellipse cx="819.5328" cy="298.0" rx="46.176" ry="4"/>
+        <ellipse cx="930.3552" cy="299.0" rx="78.4992" ry="4"/>
+        <ellipse cx="1068.8832" cy="298.0" rx="41.5584" ry="4"/>
+      </g>
+    </g>
+<rect x="48" y="374" width="540.0" height="130" rx="14" fill="#161b22" stroke="#30363d"/><g transform="translate(72 392) scale(0.7917)" fill="none" stroke="#e6edf3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l5 5-5 5M12.5 17H20"/></g><text x="100" y="407" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" letter-spacing="0.1em" fill="#e6edf3">LANGUAGES</text>
+<line x1="72" y1="444" x2="72" y2="477" stroke="#30363d" stroke-width="1"/>
+    <circle cx="72" cy="447" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="452" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Programming</text><text x="182" y="452" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="202" y="452" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">TypeScript, Python, C++</text>
+    <circle cx="72" cy="476" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="481" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Human</text><text x="182" y="481" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="202" y="481" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">English, Hindi</text>
+<rect x="612.0" y="374" width="540.0" height="130" rx="14" fill="#161b22" stroke="#30363d"/><g transform="translate(636.0 392) scale(0.7917)" fill="none" stroke="#e6edf3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 4.5-9 4.5-9-4.5z"/><path d="M3 12.5l9 4.5 9-4.5"/></g><text x="664.0" y="407" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" letter-spacing="0.1em" fill="#e6edf3">STACK</text>
+<line x1="636.0" y1="444" x2="636.0" y2="506" stroke="#30363d" stroke-width="1"/>
+    <circle cx="636.0" cy="447" r="3" fill="#a8865c" opacity="0.55"/><text x="652.0" y="452" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Mobile</text><text x="716.0" y="452" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="736.0" y="452" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">Swift (native iOS)</text>
+    <circle cx="636.0" cy="476" r="3" fill="#a8865c" opacity="0.55"/><text x="652.0" y="481" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Web</text><text x="716.0" y="481" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="736.0" y="481" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">React, Node/Express</text>
+    <circle cx="636.0" cy="505" r="3" fill="#a8865c" opacity="0.55"/><text x="652.0" y="510" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">AI/ML</text><text x="716.0" y="510" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="736.0" y="510" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">Gemini, PyTorch, HF</text>
+<rect x="48" y="528" width="540.0" height="170" rx="14" fill="#161b22" stroke="#30363d"/><g transform="translate(72 546) scale(0.7917)" fill="none" stroke="#e6edf3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L10.5 13.5M21 3l-6.8 18-3.7-7.5L3 9.8z"/></g><text x="100" y="561" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" letter-spacing="0.1em" fill="#e6edf3">CONTACT</text>
+<line x1="72" y1="598" x2="72" y2="689" stroke="#30363d" stroke-width="1"/>
+    <circle cx="72" cy="601" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="606" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Email</text><text x="162" y="606" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="182" y="606" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">nukillapraveen1@gmail.com</text>
+    <circle cx="72" cy="630" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="635" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Portfolio</text><text x="162" y="635" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="182" y="635" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">praveennukilla.dev</text>
+    <circle cx="72" cy="659" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="664" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">LinkedIn</text><text x="162" y="664" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="182" y="664" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">praveen-nukilla-753a2a334</text>
+    <circle cx="72" cy="688" r="3" fill="#a8865c" opacity="0.55"/><text x="88" y="693" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">LeetCode</text><text x="162" y="693" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="182" y="693" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">Praveen763</text>
+<rect x="612.0" y="528" width="540.0" height="170" rx="14" fill="#161b22" stroke="#30363d"/><g transform="translate(636.0 546) scale(0.7917)" fill="none" stroke="#e6edf3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4"/><path d="M4 20h16"/><path d="M8 17v-5M12.5 17V8M17 17v-7"/></g><text x="664.0" y="561" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" letter-spacing="0.1em" fill="#e6edf3">GITHUB STATS</text>
+<line x1="636.0" y1="598" x2="636.0" y2="660" stroke="#30363d" stroke-width="1"/>
+    <circle cx="636.0" cy="601" r="3" fill="#a8865c" opacity="0.55"/><text x="652.0" y="606" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Repositories</text><text x="746.0" y="606" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="766.0" y="606" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">25</text>
+    <circle cx="636.0" cy="630" r="3" fill="#a8865c" opacity="0.55"/><text x="652.0" y="635" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Followers</text><text x="746.0" y="635" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="766.0" y="635" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">0</text>
+    <circle cx="636.0" cy="659" r="3" fill="#a8865c" opacity="0.55"/><text x="652.0" y="664" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Member since</text><text x="746.0" y="664" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">:</text><text x="766.0" y="664" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" fill="#e6edf3">2025</text>
+
+    <circle cx="1074.0" cy="636" r="38" fill="none" stroke="#30363d" stroke-width="9"/>
+    <circle cx="1074.0" cy="636" r="38" fill="none" stroke="#a8865c" stroke-width="9"
+            stroke-linecap="round" stroke-dasharray="162.4 238.8"
+            transform="rotate(-90 1074.0 636)"/>
+    <path d="M1048.0 624.0 L1056.7 630.0 L1065.3 627.0 L1074.0 642.0 L1082.7 635.0 L1091.3 647.0 L1100.0 640.0" fill="none" stroke="#a8865c" stroke-width="1.8" stroke-linejoin="round"/>
+    <circle cx="1100.0" cy="640.0" r="2.6" fill="#a8865c"/>
+<rect x="48" y="722" width="1104" height="78" rx="14" fill="#161b22" stroke="#30363d"/>
+<text x="74" y="765.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="700" letter-spacing="0.12em" fill="#8b949e">TECHNOLOGIES</text>
+<line x1="198" y1="738" x2="198" y2="784" stroke="#30363d" stroke-width="1"/>
+<rect x="224.0" y="746.0" width="30" height="30" rx="8" fill="#0d1117" stroke="#30363d"/>
+<g transform="translate(231.0 753.0) scale(0.6666666666666666)" fill="none" stroke="#61DAFB" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></g><circle cx="239.0" cy="761.0" r="1.44" fill="#61DAFB"/>
+<text x="264.0" y="766.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3">React</text>
+<rect x="390.0" y="746.0" width="30" height="30" rx="8" fill="#0d1117" stroke="#30363d"/>
+<g transform="translate(397.0 753.0) scale(0.6666666666666666)"><path d="M8 3h6a3 3 0 013 3v3H9a3 3 0 00-3 3v2H4a3 3 0 01-3-3V8a5 5 0 015-5z" fill="#3776AB"/><circle cx="7" cy="6" r="1" fill="#fff"/><path d="M16 21h-6a3 3 0 01-3-3v-3h8a3 3 0 003-3V10h2a3 3 0 013 3v3a5 5 0 01-5 5z" fill="#FFD43B"/><circle cx="17" cy="18" r="1" fill="#0d1117"/></g>
+<text x="430.0" y="766.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3">Python</text>
+<rect x="563.2" y="746.0" width="30" height="30" rx="8" fill="#0d1117" stroke="#30363d"/>
+<g transform="translate(570.2 753.0) scale(0.6666666666666666)" fill="none" stroke="#539E43" stroke-width="1.8"><path d="M12 2l8 4.5v11L12 22l-8-4.5v-11z"/></g><circle cx="578.2" cy="761.0" r="1.76" fill="#539E43"/>
+<text x="603.2" y="766.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3">Node.js</text>
+<rect x="743.6" y="746.0" width="30" height="30" rx="8" fill="#0d1117" stroke="#30363d"/>
+<g transform="translate(750.6 753.0) scale(0.6666666666666666)" fill="#2496ED"><rect x="5" y="8" width="3" height="3"/><rect x="9" y="8" width="3" height="3"/><rect x="13" y="8" width="3" height="3"/><rect x="9" y="4" width="3" height="3"/><path d="M2 14c1-2 3-3 5-3h10c2 0 3 1 4 3-1 3-4 5-9 5S3 17 2 14z"/></g>
+<text x="783.6" y="766.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3">Docker</text>
+<rect x="916.8" y="746.0" width="30" height="30" rx="8" fill="#0d1117" stroke="#30363d"/>
+<g transform="translate(923.8 753.0) scale(0.6666666666666666)" fill="#4285F4"><path d="M15 8a5 5 0 00-9.6 1.8A4 4 0 006 18h9a4.5 4.5 0 000-9 5 5 0 000-1z"/></g>
+<text x="956.8" y="766.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3">GCP</text>
+<rect x="1068.4" y="746.0" width="30" height="30" rx="8" fill="#0d1117" stroke="#30363d"/>
+<g transform="translate(1075.4 753.0) scale(0.6666666666666666)" fill="none" stroke="#F05033" stroke-width="1.6"><circle cx="6" cy="6" r="2" fill="#F05033" stroke="none"/><circle cx="6" cy="18" r="2" fill="#F05033" stroke="none"/><circle cx="17" cy="12" r="2" fill="#F05033" stroke="none"/><path d="M6 8v8M6 12h9a2 2 0 002-2"/></g>
+<text x="1108.4" y="766.0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" fill="#e6edf3">Git</text>
+</svg>

@@ -14,6 +14,7 @@ a tan accent, no hard black anywhere.
 """
 
 import pathlib
+import re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
@@ -301,10 +302,38 @@ def build_card() -> str:
 """
 
 
+# A light card sits on GitHub's dark README as a bright slab, so the dark
+# variant is the same drawing with its paper tones swapped for GitHub's own
+# canvas colours. Done as a colour remap of the finished SVG rather than a
+# second palette threaded through every function: the card has exactly one
+# layout, and only the surfaces change.
+# ponytail: string remap, thread a palette dict through if the two themes
+# ever need to differ in more than colour.
+DARK_REMAP = {
+    "#f7f5f0": "#0d1117",  # field   -> GitHub canvas
+    "#fdfcfa": "#161b22",  # panels  -> GitHub inset
+    "#e3ded3": "#30363d",  # hairlines
+    "#211f1b": "#e6edf3",  # ink
+    "#6f6858": "#8b949e",  # muted ink
+    "#efeae0": "#161b22",  # still-life paper
+    "#f7f4ec": "#1c2430",  # still-life window light
+    "#dfd9cc": "#2b323c",  # still-life shadow
+    "#e6e0d3": "#232a34",  # middle book
+}
+
+
 def main() -> None:
-    out = ASSETS / "profile-card.svg"
-    out.write_text(build_card())
-    print(f"wrote {out.relative_to(ROOT)}  ({out.stat().st_size} bytes)")
+    light = build_card()
+    for name, svg in (("profile-card.svg", light),
+                      ("profile-card-dark.svg", _recolour(light, DARK_REMAP))):
+        out = ASSETS / name
+        out.write_text(svg)
+        print(f"wrote {out.relative_to(ROOT)}  ({out.stat().st_size} bytes)")
+
+
+def _recolour(svg: str, mapping: dict[str, str]) -> str:
+    # one pass, so a colour that maps onto another key can't be remapped twice
+    return re.sub("|".join(mapping), lambda m: mapping[m.group()], svg)
 
 
 if __name__ == "__main__":
