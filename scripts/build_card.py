@@ -10,12 +10,13 @@ Fixed two-tone design (not theme-split): matches the reference layout
 exactly rather than adapting per GitHub light/dark mode.
 """
 
+import base64
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 
-W, H = 1400, 862
+W, H = 1400, 784
 
 DARK_BG = "#0d1117"
 DARK_PANEL2 = "#161b22"
@@ -29,7 +30,9 @@ MUTED = "#8b949e"
 SIGNAL = "#d11440"
 MONO = "ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace"
 
-AVATAR_URL = "https://avatars.githubusercontent.com/u/206308531?v=4"
+# GitHub sanitizes external <image href> refs out of SVGs it serves, so the
+# avatar has to travel as an inline data URI rather than a live URL.
+AVATAR_DATA_URI = "data:image/png;base64," + base64.b64encode((ASSETS / "avatar.png").read_bytes()).decode()
 
 SIDEBAR_W = 400
 
@@ -131,13 +134,13 @@ def sidebar() -> str:
         f'<text x="{40 + i*46 + 18}" y="{social_y+5}" text-anchor="middle" font-family="{MONO}" font-size="11" fill="{NAME}">{s}</text>'
         for i, s in enumerate(socials))
 
-    quote_y = H - 150
+    quote_y = social_y + 30
     return f"""
   <rect x="0" y="0" width="{SIDEBAR_W}" height="{H}" fill="{DARK_BG}"/>
 
   <circle cx="150" cy="140" r="72" fill="{DARK_PANEL2}"/>
   <clipPath id="avatarClip"><circle cx="150" cy="140" r="68"/></clipPath>
-  <image href="{AVATAR_URL}" x="82" y="72" width="136" height="136" clip-path="url(#avatarClip)"/>
+  <image href="{AVATAR_DATA_URI}" x="82" y="72" width="136" height="136" clip-path="url(#avatarClip)"/>
   <circle cx="150" cy="140" r="68" fill="none" stroke="{SIGNAL}" stroke-width="2"/>
   <circle cx="202" cy="192" r="10" fill="#3fb950" stroke="{DARK_BG}" stroke-width="3"/>
 
@@ -210,12 +213,8 @@ def content() -> str:
     top = 40
 
     out = [f'<rect x="{SIDEBAR_W}" y="0" width="{W-SIDEBAR_W}" height="{H}" fill="{CREAM}"/>']
-    out.append(f'<circle cx="{L+4}" cy="{top-4}" r="3.5" fill="{SIGNAL}"/>')
-    out.append(f'<text x="{L+18}" y="{top}" font-family="{MONO}" font-size="13" fill="{MUTED_INK}">'
-                f'Prowin7 / README.md</text>')
-    out.append(f'<line x1="{L}" y1="{top+16}" x2="{R}" y2="{top+16}" stroke="{LINE}" stroke-width="1"/>')
 
-    row1_y = top + 48
+    row1_y = top
     row1_h = 210
     about_w = (R - L) * 0.56
     out.append(panel_box(L, row1_y, about_w, row1_h, "ABOUT ME"))
