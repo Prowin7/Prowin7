@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
 Regenerate assets/profile-card.svg — a two-panel GitHub-profile card:
-a dark sidebar (avatar, name, bio, contact, quote) beside a cream
+a dark sidebar (avatar, name, bio, contact, quote) beside a dark
 content grid (neofetch-style "about", languages, stack, contact,
 live GitHub stats, tech strip). Static, no animation — this is a
 card, not the terminal banner.
 
-Fixed two-tone design (not theme-split): matches the reference layout
-exactly rather than adapting per GitHub light/dark mode.
+All-dark palette, not theme-split: matches GitHub's own dark UI
+chrome so the card reads as part of the page, not a pasted-in light
+rectangle.
 """
 
 import base64
@@ -20,11 +21,11 @@ W, H = 1400, 784
 
 DARK_BG = "#0d1117"
 DARK_PANEL2 = "#161b22"
-CREAM = "#f4efe6"
-CARD = "#faf7f0"
-LINE = "#ddd6c6"
-INK = "#1c1a17"
-MUTED_INK = "#6b6558"
+CREAM = "#0d1117"
+CARD = "#161b22"
+LINE = "#30363d"
+INK = "#e6edf3"
+MUTED_INK = "#8b949e"
 NAME = "#e6edf3"
 MUTED = "#8b949e"
 SIGNAL = "#d11440"
@@ -183,15 +184,16 @@ def kv_rows(x, y, rows, key_w=88) -> str:
 
 
 def mountains(x, y, w, h) -> str:
-    sun_cx, sun_cy = x + w * 0.62, y + h * 0.38
+    moon_cx, moon_cy = x + w * 0.62, y + h * 0.32
     return f"""
-    <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="10" fill="#e9e2d0"/>
+    <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="10" fill="#161b22"/>
     <clipPath id="mtnClip"><rect x="{x}" y="{y}" width="{w}" height="{h}" rx="10"/></clipPath>
     <g clip-path="url(#mtnClip)">
-      <circle cx="{sun_cx}" cy="{sun_cy}" r="34" fill="#d8b98a"/>
-      <path d="M{x} {y+h*0.62} L{x+w*0.22} {y+h*0.32} L{x+w*0.4} {y+h*0.62} L{x+w*0.58} {y+h*0.26} L{x+w*0.8} {y+h*0.6} L{x+w} {y+h*0.4} L{x+w} {y+h} L{x} {y+h} Z" fill="#c9beac"/>
-      <path d="M{x} {y+h*0.78} L{x+w*0.3} {y+h*0.55} L{x+w*0.55} {y+h*0.8} L{x+w*0.78} {y+h*0.6} L{x+w} {y+h*0.75} L{x+w} {y+h} L{x} {y+h} Z" fill="#b3a68f"/>
-      <g fill="#4a4438">
+      <circle cx="{moon_cx}" cy="{moon_cy}" r="26" fill="{SIGNAL}" opacity="0.5"/>
+      <circle cx="{moon_cx}" cy="{moon_cy}" r="18" fill="#f4efe6" opacity="0.9"/>
+      <path d="M{x} {y+h*0.62} L{x+w*0.22} {y+h*0.32} L{x+w*0.4} {y+h*0.62} L{x+w*0.58} {y+h*0.26} L{x+w*0.8} {y+h*0.6} L{x+w} {y+h*0.4} L{x+w} {y+h} L{x} {y+h} Z" fill="#232a34"/>
+      <path d="M{x} {y+h*0.78} L{x+w*0.3} {y+h*0.55} L{x+w*0.55} {y+h*0.8} L{x+w*0.78} {y+h*0.6} L{x+w} {y+h*0.75} L{x+w} {y+h} L{x} {y+h} Z" fill="#1a1f27"/>
+      <g fill="#0d1117">
         <path d="M{x+w*0.14} {y+h*0.9} l10 -34 10 34z"/>
         <path d="M{x+w*0.2} {y+h*0.92} l9 -28 9 28z"/>
         <path d="M{x+w*0.86} {y+h*0.9} l10 -30 10 30z"/>
