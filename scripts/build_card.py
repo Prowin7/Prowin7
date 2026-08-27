@@ -19,7 +19,14 @@ import re
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 
-W, H = 1200, 840
+
+def panel_h(rows: int) -> float:
+    """Panel tall enough for `rows` kv rows: title block, the rows themselves,
+    and the same padding under the last row as over the first."""
+    return 104 + (rows - 1) * 29
+
+
+W, H = 1200, 40 + panel_h(6) + 24 + panel_h(3) + 24 + panel_h(4) + 24 + 78 + 40
 
 CREAM = "#f7f5f0"        # content field
 CARD = "#fdfcfa"         # panels on the content field
@@ -127,7 +134,9 @@ def still_life(x, y, w, h) -> str:
     """A quiet desk scene — leafy branch in a vase, stacked books, a steaming
     mug — sitting on a lit surface with long soft shadows. Drawn in the card's
     own sage/tan/clay tones so it reads as part of the palette, not clip art."""
-    sage, sage_d, clay, paper, shadow = "#9aa68f", "#7e8b74", "#c8a882", "#efeae0", "#dfd9cc"
+    sage, sage_d, clay = "#9aa68f", "#7e8b74", "#c8a882"
+    paper, shadow = "#efeae0", "#dfd9cc"   # wall, ground shadow
+    edge = "#d4cdbc"                       # object outlines, lighter than the wall in both themes
     base = y + h * 0.78  # the tabletop line everything stands on
 
     leaves = []
@@ -155,10 +164,10 @@ def still_life(x, y, w, h) -> str:
 
       <!-- vase -->
       <path d="M{x+w*0.19} {base-34} q{w*0.05} -14 {w*0.1} 0 l0 30 q0 6 -6 6 h-{w*0.075} q-6 0 -6 -6 z"
-            fill="{paper}" stroke="{shadow}" stroke-width="1.4"/>
+            fill="{paper}" stroke="{edge}" stroke-width="1.4"/>
 
       <!-- stacked books -->
-      <g stroke="{shadow}" stroke-width="1.2">
+      <g stroke="{edge}" stroke-width="1.2">
         <rect x="{x+w*0.34}" y="{base-30}" width="{w*0.3}" height="11" rx="2" fill="{paper}"/>
         <rect x="{x+w*0.36}" y="{base-19}" width="{w*0.3}" height="11" rx="2" fill="#e6e0d3"/>
         <rect x="{x+w*0.35}" y="{base-8}" width="{w*0.31}" height="10" rx="2" fill="{sage}" opacity="0.55"/>
@@ -166,10 +175,10 @@ def still_life(x, y, w, h) -> str:
 
       <!-- mug, with a curl of steam -->
       <path d="M{x+w*0.75} {base-38} h{w*0.13} v26 q0 10 -10 10 h-{w*0.055} q-10 0 -10 -10 z"
-            fill="{paper}" stroke="{shadow}" stroke-width="1.4"/>
-      <path d="M{x+w*0.88} {base-30} q12 0 12 9 t-12 9" fill="none" stroke="{shadow}" stroke-width="1.4"/>
+            fill="{paper}" stroke="{edge}" stroke-width="1.4"/>
+      <path d="M{x+w*0.88} {base-30} q12 0 12 9 t-12 9" fill="none" stroke="{edge}" stroke-width="1.4"/>
       <path d="M{x+w*0.755} {base-38} h{w*0.12} v5 h-{w*0.12} z" fill="{clay}" opacity="0.55"/>
-      <path d="M{x+w*0.79} {base-48} q-5 -8 0 -15 q5 -7 0 -14" fill="none" stroke="{shadow}" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M{x+w*0.79} {base-48} q-5 -8 0 -15 q5 -7 0 -14" fill="none" stroke="{edge}" stroke-width="1.5" stroke-linecap="round"/>
 
       <!-- contact shadows pooling to the right of each object -->
       <g fill="{shadow}" opacity="0.55">
@@ -196,27 +205,16 @@ def stats_ring(cx, cy, r=38) -> str:
     <circle cx="{sx+72*(sw/72):.1f}" cy="{sy+26-10:.1f}" r="2.6" fill="{SIGNAL}"/>"""
 
 
-def header(l, r, y) -> str:
-    """`Prowin7 / README.md` with a book mark and a code glyph, over a hairline —
-    the card naming itself instead of re-introducing the person."""
-    return (f'{_line_icon("book", l, y - 13, size=22, stroke=MUTED_INK)}'
-            f'<text x="{l+36}" y="{y+5}" font-family="{MONO}" font-size="16" fill="{MUTED_INK}">Prowin7</text>'
-            f'<text x="{l+126}" y="{y+5}" font-family="{MONO}" font-size="16" fill="{LINE}">/</text>'
-            f'<text x="{l+148}" y="{y+5}" font-family="{MONO}" font-size="16" fill="{INK}">README.md</text>'
-            f'{_line_icon("code", r - 22, y - 12, size=22, stroke=MUTED_INK)}'
-            f'<line x1="{l}" y1="{y+30}" x2="{r}" y2="{y+30}" stroke="{LINE}" stroke-width="1"/>')
-
 
 def content() -> str:
     L = 48
     R = W - 48
-    top = 100
+    top = 40
 
-    out = [f'<rect x="0" y="0" width="{W}" height="{H}" fill="{CREAM}"/>',
-           header(L, R, 44)]
+    out = [f'<rect x="0" y="0" width="{W}" height="{H}" fill="{CREAM}"/>']
 
     row1_y = top
-    row1_h = 250
+    row1_h = panel_h(6)
     about_w = (R - L) * 0.56
     out.append(panel_box(L, row1_y, about_w, row1_h, "ABOUT ME", "person"))
     about_rows = [
@@ -233,7 +231,7 @@ def content() -> str:
     out.append(still_life(art_x, row1_y, R - art_x, row1_h))
 
     row2_y = row1_y + row1_h + 24
-    row2_h = 130
+    row2_h = panel_h(3)   # tallest of LANGUAGES / STACK
     half = (R - L - 24) / 2
     out.append(panel_box(L, row2_y, half, row2_h, "LANGUAGES", "chevrons"))
     out.append(kv_rows(L + 24, row2_y + 78, [
@@ -250,7 +248,7 @@ def content() -> str:
     ], key_w=80))
 
     row3_y = row2_y + row2_h + 24
-    row3_h = 170
+    row3_h = panel_h(4)   # tallest of CONTACT / GITHUB STATS
     out.append(panel_box(L, row3_y, half, row3_h, "CONTACT", "send"))
     out.append(kv_rows(L + 24, row3_y + 78, [
         ("Email", "nukillapraveen1@gmail.com"),
@@ -315,10 +313,11 @@ DARK_REMAP = {
     "#e3ded3": "#30363d",  # hairlines
     "#211f1b": "#e6edf3",  # ink
     "#6f6858": "#8b949e",  # muted ink
-    "#efeae0": "#161b22",  # still-life paper
-    "#f7f4ec": "#1c2430",  # still-life window light
-    "#dfd9cc": "#2b323c",  # still-life shadow
-    "#e6e0d3": "#232a34",  # middle book
+    "#efeae0": "#12171f",  # still-life wall
+    "#f7f4ec": "#1b222c",  # still-life window light
+    "#dfd9cc": "#252c36",  # still-life ground shadow
+    "#d4cdbc": "#5c6675",  # still-life outlines
+    "#e6e0d3": "#2a323d",  # middle book
 }
 
 

@@ -5,7 +5,7 @@
 </picture>
 </div>
 
-<img src="./assets/rule.svg" width="100%" alt="" />
+---
 
 ### Now
 
@@ -13,7 +13,7 @@ Applied AI & Backend Engineer Intern at **Top Speech Health**, final-year studen
 
 Currently hardening a clinical speech-assessment pipeline (Gemini + Praat + FFT) into a paid production tool, and shipping a native iOS therapy app with a live subscriber base.
 
-<img src="./assets/rule.svg" width="100%" alt="" />
+---
 
 ### Toolkit
 
@@ -24,7 +24,7 @@ Currently hardening a clinical speech-assessment pipeline (Gemini + Praat + FFT)
 | **Backend** | Node.js / Express · React · Firebase / Firestore · REST APIs |
 | **Infra** | GCP (Cloud Functions, Cloud Run, Storage, Logging) · Docker · GitHub Actions · MySQL |
 
-<img src="./assets/rule.svg" width="100%" alt="" />
+---
 
 ### In numbers
 
