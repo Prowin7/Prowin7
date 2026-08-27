@@ -1,7 +1,7 @@
 <svg width="1200" height="320" viewBox="0 0 1200 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Praveen Nukilla &#8212; Applied AI &amp; Backend Engineer">
   <defs>
     <style>
-      .eyebrow { font: 600 13px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; letter-spacing: .18em; fill: #d11440; }
+      .eyebrow { font: 600 13px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; letter-spacing: .18em; fill: #a8865c; }
       .name    { font: 700 46px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; fill: #0d1117; }
       .role    { font: 400 20px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; fill: #57606a; }
       .caption { font: 400 13px ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; fill: #57606a; letter-spacing: .02em; }
@@ -166,7 +166,7 @@
 
       <!-- chest control panel -->
       <rect x="-8" y="81" width="17" height="13" rx="2.5" fill="#dcdfe3" stroke="#12151a" stroke-width="1.3"/>
-      <circle cx="-3" cy="87" r="1.6" fill="#d11440"/>
+      <circle cx="-3" cy="87" r="1.6" fill="#a8865c"/>
       <line x1="2" y1="85" x2="6" y2="85" stroke="#12151a" stroke-width="1"/>
       <line x1="2" y1="89" x2="6" y2="89" stroke="#12151a" stroke-width="1"/>
 
@@ -185,7 +185,7 @@
       <circle cx="0" cy="42" r="21" fill="#f5f6f8" stroke="#12151a" stroke-width="2.4"/>
       <ellipse cx="3" cy="43" rx="14" ry="16" fill="#0a0b0d"/>
       <path d="M-7 33 Q-1 24 8 29" stroke="#ffffff" stroke-width="2.6" fill="none" stroke-linecap="round" opacity="0.35"/>
-      <circle cx="-17" cy="49" r="1.7" fill="#d11440"/>
+      <circle cx="-17" cy="49" r="1.7" fill="#a8865c"/>
     </g>
   </g>
 
@@ -193,5 +193,5 @@
   <text x="64" y="152" class="name name-in">Praveen Nukilla</text>
   <text x="64" y="188" class="role reveal"    style="animation-delay:.28s">Speech-AI systems on GCP + Gemini</text>
   <text x="64" y="222" class="caption reveal" style="animation-delay:.38s">IIIT Allahabad &#183; Final Year &#183; ECE</text>
-  <text x="64" y="252" class="caption reveal" style="animation-delay:.48s" fill="#d11440">400+ DSA solved &#183; live products, real users</text>
+  <text x="64" y="252" class="caption reveal" style="animation-delay:.48s" fill="#a8865c">400+ DSA solved &#183; live products, real users</text>
 </svg>

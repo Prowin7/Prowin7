@@ -62,7 +62,9 @@ ICONS = [
     ("git",       1085, 255, 26, 0.85, 2, 4.3, 1.6),
 ]
 
-SIGNAL = "#d11440"
+# Warm tan, matching the profile card's accent (see scripts/build_card.py) —
+# the section rules sit directly under that card in the README.
+SIGNAL = "#a8865c"
 
 THEMES = {
     "dark": dict(name="#e6edf3", muted="#8b949e"),
