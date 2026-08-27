@@ -1,63 +1,37 @@
 #!/usr/bin/env python3
 """
-Regenerate assets/profile-card.svg — a two-panel GitHub-profile card:
-a sidebar (avatar, name, bio, contact, quote) beside a content grid
-(neofetch-style "about", languages, stack, contact, live GitHub
-stats, tech strip). Static, no animation — this is a card, not the
-terminal banner.
+Regenerate assets/profile-card.svg — a single-panel GitHub-profile card:
+a README-header row above a content grid (neofetch-style "about",
+languages, stack, contact, GitHub stats, tech strip). Static, no
+animation — this is a card, not the terminal banner.
 
-Warm off-white throughout, not theme-split: one editorial palette
-(three paper tones, tan accent, serif name over sans body) rather
-than a light half bolted to a dark half.
+No avatar, name, or bio panel: GitHub already renders all three in the
+sidebar immediately left of the README, and repeating them read as two
+profiles side by side. The card carries only what the sidebar doesn't.
+
+Warm off-white throughout: one editorial palette — two paper tones and
+a tan accent, no hard black anywhere.
 """
 
-import base64
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 
-W, H = 1400, 830
+W, H = 1200, 840
 
-# Warm off-white throughout: the sidebar is a half-step darker than the
-# content field, which is a half-step darker than the panels sitting on it.
-# Three tones, no hard black anywhere.
-DARK_BG = "#efebe3"      # sidebar
-DARK_PANEL2 = "#e7e2d8"  # inset blocks inside the sidebar (quote, social pips)
 CREAM = "#f7f5f0"        # content field
 CARD = "#fdfcfa"         # panels on the content field
 LINE = "#e3ded3"
 INK = "#211f1b"
 MUTED_INK = "#6f6858"
-NAME = "#211f1b"
-MUTED = "#6f6858"
-SIGNAL = "#a8865c"       # warm tan accent, in place of the old signal red
+SIGNAL = "#a8865c"       # warm tan accent
 MONO = "ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace"
 SANS = "'Helvetica Neue', Helvetica, Arial, sans-serif"
-SERIF = "Georgia, 'Iowan Old Style', 'Times New Roman', serif"
-
-# GitHub sanitizes external <image href> refs out of SVGs it serves, so the
-# avatar has to travel as an inline data URI rather than a live URL.
-AVATAR_DATA_URI = "data:image/png;base64," + base64.b64encode((ASSETS / "avatar.png").read_bytes()).decode()
-
-SIDEBAR_W = 400
 
 # -- real GitHub stats (api.github.com/users/Prowin7, fetched 2026-08-27) --
 STATS = dict(repos=25, followers=0, stars=0, since="2025")
 
-
-def _wrap(text: str, width: int) -> list[str]:
-    words, lines, cur = text.split(), [], ""
-    for w in words:
-        trial = f"{cur} {w}".strip()
-        if len(trial) > width and cur:
-            lines.append(cur)
-            cur = w
-        else:
-            cur = trial
-    if cur:
-        lines.append(cur)
-    return lines
 
 
 def _icon_react(x, y, s=18):
@@ -101,25 +75,14 @@ def _icon_git(x, y, s=18):
             '<path d="M6 8v8M6 12h9a2 2 0 002-2"/></g>')
 
 
-def _badge(x, y, label, sub, w=118):
-    """A rounded letter-badge pill for languages that have no brand mark."""
-    return f"""
-    <rect x="{x}" y="{y}" width="{w}" height="34" rx="8" fill="#fff" stroke="{LINE}"/>
-    <rect x="{x+8}" y="{y+7}" width="20" height="20" rx="4" fill="{INK}"/>
-    <text x="{x+18}" y="{y+21}" text-anchor="middle" font-family="{MONO}" font-size="9.5" font-weight="700" fill="#fff">{label}</text>
-    <text x="{x+36}" y="{y+22}" font-family="{MONO}" font-size="12.5" fill="{INK}">{sub}</text>"""
-
-
 _ICON_PATHS = {
     # each drawn inside a 24x24 box, stroked not filled, so one stroke colour
     # recolours the whole set
     "pin": '<path d="M12 21s7-6.3 7-11a7 7 0 10-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/>',
-    "cal": '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
-    "mail": '<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3 7l9 6 9-6"/>',
-    "link": '<path d="M10 14a4 4 0 006 .5l3-3a4 4 0 10-5.7-5.7L11.5 7"/>'
-            '<path d="M14 10a4 4 0 00-6-.5l-3 3A4 4 0 1010.7 18l1.8-1.8"/>',
-    "github": '<path d="M12 2.5a9.5 9.5 0 00-3 18.5c.5.1.7-.2.7-.5v-1.7c-2.6.6-3.2-1.2-3.2-1.2-.4-1.1-1-1.4-1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.1-.2-4.3-1-4.3-4.6 0-1 .4-1.9 1-2.5-.1-.3-.4-1.3.1-2.6 0 0 .8-.3 2.6 1a9 9 0 014.7 0c1.8-1.3 2.6-1 2.6-1 .5 1.3.2 2.3.1 2.6.6.6 1 1.5 1 2.5 0 3.6-2.2 4.4-4.3 4.6.3.3.6.9.6 1.8v2.7c0 .3.2.6.7.5A9.5 9.5 0 0012 2.5z"/>',
-    "linkedin": '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7.5 10v7M7.5 7.2v.1M11.5 17v-4a2.5 2.5 0 015 0v4"/>',
+    # card header
+    "book": '<path d="M3 5.5A2.5 2.5 0 015.5 3H10a2 2 0 012 2v14a2 2 0 00-2-2H3z"/>'
+            '<path d="M21 5.5A2.5 2.5 0 0018.5 3H14a2 2 0 00-2 2v14a2 2 0 012-2h7z"/>',
+    "code": '<path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/>',
     # panel headers
     "person": '<circle cx="12" cy="8" r="3.8"/><path d="M4.5 20a7.5 7.5 0 0115 0"/>',
     "chevrons": '<path d="M4 7l5 5-5 5M12.5 17H20"/>',
@@ -134,63 +97,6 @@ def _line_icon(kind: str, x: float, y: float, size: int = 18, stroke: str | None
     return (f'<g transform="translate({x} {y}) scale({size/24:.4f})" fill="none" '
             f'stroke="{stroke or SIGNAL}" stroke-width="1.7" stroke-linecap="round" '
             f'stroke-linejoin="round">{_ICON_PATHS[kind]}</g>')
-
-
-def sidebar() -> str:
-    bio_lines = _wrap(
-        "Building production speech-AI systems on GCP: real-time audio "
-        "capture, Gemini-scored assessment, Firestore-backed pipelines "
-        "serving paying users internationally.", 34)
-    bio_svg = "\n    ".join(
-        f'<text x="40" y="{356 + i*22}" font-family="{SANS}" font-size="14" fill="{MUTED}">{l}</text>'
-        for i, l in enumerate(bio_lines))
-
-    rows = [
-        ("pin", "Prayagraj, India"),
-        ("cal", "IIIT Allahabad · Final Year"),
-        ("mail", "nukillapraveen1@gmail.com"),
-        ("link", "praveennukilla.dev"),
-    ]
-    y0 = 356 + len(bio_lines) * 22 + 34
-    meta_svg = []
-    for i, (kind, label) in enumerate(rows):
-        y = y0 + i * 32
-        meta_svg.append(f'{_line_icon(kind, 40, y - 14)}'
-                         f'<text x="66" y="{y}" font-family="{SANS}" font-size="14" fill="{MUTED}">{label}</text>')
-    meta_svg = "\n    ".join(meta_svg)
-
-    social_y = y0 + len(rows) * 32 + 28
-    social_svg = "\n    ".join(
-        f'<rect x="{40 + i*46}" y="{social_y-18}" width="36" height="36" rx="10" fill="{DARK_PANEL2}"/>'
-        f'{_line_icon(kind, 46 + i*46, social_y - 12, stroke=INK)}'
-        for i, kind in enumerate(["github", "linkedin", "mail"]))
-
-    quote_y = social_y + 30
-    return f"""
-  <rect x="0" y="0" width="{SIDEBAR_W}" height="{H}" fill="{DARK_BG}"/>
-
-  <circle cx="150" cy="140" r="78" fill="none" stroke="{LINE}" stroke-width="1.2"/>
-  <clipPath id="avatarClip"><circle cx="150" cy="140" r="68"/></clipPath>
-  <image href="{AVATAR_DATA_URI}" x="82" y="72" width="136" height="136" clip-path="url(#avatarClip)"/>
-  <circle cx="205" cy="195" r="9" fill="{SIGNAL}"/>
-
-  <text x="40" y="256" font-family="{SERIF}" font-size="30" fill="{NAME}">Praveen Nukilla</text>
-  <text x="40" y="284" font-family="{SANS}" font-size="15" fill="{SIGNAL}">Applied AI &amp; Backend Engineer</text>
-
-  {bio_svg}
-
-  <line x1="40" y1="{y0-22}" x2="{SIDEBAR_W-40}" y2="{y0-22}" stroke="{LINE}" stroke-width="1"/>
-  {meta_svg}
-
-  <line x1="40" y1="{social_y-34}" x2="{SIDEBAR_W-40}" y2="{social_y-34}" stroke="{LINE}" stroke-width="1"/>
-  {social_svg}
-
-  <rect x="40" y="{quote_y}" width="{SIDEBAR_W-80}" height="100" rx="10" fill="{DARK_PANEL2}"/>
-  <text x="58" y="{quote_y+34}" font-family="{SERIF}" font-size="30" fill="{SIGNAL}" opacity="0.75">&#8220;</text>
-  <text x="58" y="{quote_y+52}" font-family="{SANS}" font-size="13.5" fill="{NAME}">Code is like humor. When you have</text>
-  <text x="58" y="{quote_y+72}" font-family="{SANS}" font-size="13.5" fill="{NAME}">to explain it, it's bad.</text>
-  <text x="{SIDEBAR_W-58}" y="{quote_y+92}" text-anchor="end" font-family="{SANS}" font-size="12.5" fill="{SIGNAL}">&#8212; Cory House</text>
-"""
 
 
 def panel_box(x, y, w, h, title, icon_kind="pin") -> str:
@@ -289,12 +195,24 @@ def stats_ring(cx, cy, r=38) -> str:
     <circle cx="{sx+72*(sw/72):.1f}" cy="{sy+26-10:.1f}" r="2.6" fill="{SIGNAL}"/>"""
 
 
-def content() -> str:
-    L = SIDEBAR_W + 48
-    R = W - 48
-    top = 40
+def header(l, r, y) -> str:
+    """`Prowin7 / README.md` with a book mark and a code glyph, over a hairline —
+    the card naming itself instead of re-introducing the person."""
+    return (f'{_line_icon("book", l, y - 13, size=22, stroke=MUTED_INK)}'
+            f'<text x="{l+36}" y="{y+5}" font-family="{MONO}" font-size="16" fill="{MUTED_INK}">Prowin7</text>'
+            f'<text x="{l+126}" y="{y+5}" font-family="{MONO}" font-size="16" fill="{LINE}">/</text>'
+            f'<text x="{l+148}" y="{y+5}" font-family="{MONO}" font-size="16" fill="{INK}">README.md</text>'
+            f'{_line_icon("code", r - 22, y - 12, size=22, stroke=MUTED_INK)}'
+            f'<line x1="{l}" y1="{y+30}" x2="{r}" y2="{y+30}" stroke="{LINE}" stroke-width="1"/>')
 
-    out = [f'<rect x="{SIDEBAR_W}" y="0" width="{W-SIDEBAR_W}" height="{H}" fill="{CREAM}"/>']
+
+def content() -> str:
+    L = 48
+    R = W - 48
+    top = 100
+
+    out = [f'<rect x="0" y="0" width="{W}" height="{H}" fill="{CREAM}"/>',
+           header(L, R, 44)]
 
     row1_y = top
     row1_h = 250
@@ -314,13 +232,13 @@ def content() -> str:
     out.append(still_life(art_x, row1_y, R - art_x, row1_h))
 
     row2_y = row1_y + row1_h + 24
-    row2_h = 150
+    row2_h = 130
     half = (R - L - 24) / 2
     out.append(panel_box(L, row2_y, half, row2_h, "LANGUAGES", "chevrons"))
     out.append(kv_rows(L + 24, row2_y + 78, [
         ("Programming", "TypeScript, Python, C++"),
         ("Human", "English, Hindi"),
-    ], key_w=100))
+    ], key_w=110))
 
     stack_x = L + half + 24
     out.append(panel_box(stack_x, row2_y, half, row2_h, "STACK", "layers"))
@@ -359,9 +277,12 @@ def content() -> str:
 
     marks = [("React", _icon_react), ("Python", _icon_python), ("Node.js", _icon_node),
              ("Docker", _icon_docker), ("GCP", _icon_gcp), ("Git", _icon_git)]
-    step = (R - L - 176) / len(marks)
+    # even gaps rather than an even pitch: labels differ in width, so a fixed
+    # pitch leaves each mark floating away from its own label
+    widths = [38 + len(lbl) * 7.2 for lbl, _ in marks]
+    gap = (R - 24 - (L + 176) - sum(widths)) / (len(marks) - 1)
     for i, (lbl, draw) in enumerate(marks):
-        mx = L + 176 + i * step
+        mx = L + 176 + sum(widths[:i]) + i * gap
         my = row4_y + row4_h / 2
         out.append(f'<rect x="{mx}" y="{my-15}" width="30" height="30" rx="8" fill="{CREAM}" stroke="{LINE}"/>')
         out.append(draw(mx + 7, my - 8, 16))
@@ -375,7 +296,6 @@ def build_card() -> str:
   <defs>
     <style>text {{ font-family: {SANS}; }}</style>
   </defs>
-{sidebar()}
 {content()}
 </svg>
 """
